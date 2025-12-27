@@ -1,0 +1,569 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2025-12-27T14:07:28Z"
+    generateName: opentelemetry-operator-controller-manager-6668dc5cb6-
+    generation: 1
+    labels:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+      pod-template-hash: 6668dc5cb6
+    name: opentelemetry-operator-controller-manager-6668dc5cb6-w9qx7
+    namespace: opentelemetry-operator-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: opentelemetry-operator-controller-manager-6668dc5cb6
+      uid: 5be37d0d-041b-405b-83f9-c6ec71e29797
+    resourceVersion: "805856"
+    uid: 0203eb83-4fa9-4731-953c-efdaf43b6ae4
+  spec:
+    containers:
+    - args:
+      - --metrics-addr=127.0.0.1:8080
+      - --enable-leader-election
+      - --zap-log-level=info
+      - --zap-time-encoding=rfc3339nano
+      - --enable-nginx-instrumentation=true
+      env:
+      - name: SERVICE_ACCOUNT_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: spec.serviceAccountName
+      image: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.101.0
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 20
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: manager
+      ports:
+      - containerPort: 9443
+        name: webhook-server
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readyz
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /tmp/k8s-webhook-server/serving-certs
+        name: cert
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-g4hpt
+        readOnly: true
+    - args:
+      - --secure-listen-address=0.0.0.0:8443
+      - --upstream=http://127.0.0.1:8080/
+      - --logtostderr=true
+      - --v=0
+      image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+      imagePullPolicy: IfNotPresent
+      name: kube-rbac-proxy
+      ports:
+      - containerPort: 8443
+        name: https
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 128Mi
+        requests:
+          cpu: 5m
+          memory: 64Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-g4hpt
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: opentelemetry-operator-controller-manager
+    serviceAccountName: opentelemetry-operator-controller-manager
+    terminationGracePeriodSeconds: 10
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: cert
+      secret:
+        defaultMode: 420
+        secretName: opentelemetry-operator-controller-manager-service-cert
+    - name: kube-api-access-g4hpt
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-27T14:07:33Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-27T14:07:28Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-27T14:07:45Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-27T14:07:45Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-27T14:07:28Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 5m
+        memory: 64Mi
+      containerID: containerd://ef0e9c2cec91ad108e35ad1da791aefe4e0233ac2fce0301bb6924520aab0fa6
+      image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+      imageID: gcr.io/kubebuilder/kube-rbac-proxy@sha256:d4883d7c622683b3319b5e6b3a7edfbf2594c18060131a8bf64504805f875522
+      lastState: {}
+      name: kube-rbac-proxy
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 128Mi
+        requests:
+          cpu: 5m
+          memory: 64Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-27T14:07:32Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-g4hpt
+        readOnly: true
+        recursiveReadOnly: Disabled
+    - allocatedResources:
+        cpu: 100m
+        memory: 64Mi
+      containerID: containerd://65dcabbb2d5ba1dac1678f985e659dc6c6077c9059940802e6704deafb82cc01
+      image: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.101.0
+      imageID: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator@sha256:ac26ee0a25a3513f0743c45b214c57a789fd64570b72c78d844686eda81e2b3e
+      lastState: {}
+      name: manager
+      ready: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-27T14:07:32Z"
+      volumeMounts:
+      - mountPath: /tmp/k8s-webhook-server/serving-certs
+        name: cert
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-g4hpt
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    phase: Running
+    podIP: 10.244.0.67
+    podIPs:
+    - ip: 10.244.0.67
+    qosClass: Burstable
+    startTime: "2025-12-27T14:07:28Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"},"name":"opentelemetry-operator-controller-manager-metrics-service","namespace":"opentelemetry-operator-system"},"spec":{"ports":[{"name":"https","port":8443,"protocol":"TCP","targetPort":"https"}],"selector":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"}}}
+    creationTimestamp: "2025-12-27T14:07:27Z"
+    labels:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+    name: opentelemetry-operator-controller-manager-metrics-service
+    namespace: opentelemetry-operator-system
+    resourceVersion: "805682"
+    uid: 7e4f0452-cf30-4c96-b700-ad1f621ee761
+  spec:
+    clusterIP: 10.0.76.117
+    clusterIPs:
+    - 10.0.76.117
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    selector:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"opentelemetry-operator"},"name":"opentelemetry-operator-webhook-service","namespace":"opentelemetry-operator-system"},"spec":{"ports":[{"port":443,"protocol":"TCP","targetPort":9443}],"selector":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"}}}
+    creationTimestamp: "2025-12-27T14:07:27Z"
+    labels:
+      app.kubernetes.io/name: opentelemetry-operator
+    name: opentelemetry-operator-webhook-service
+    namespace: opentelemetry-operator-system
+    resourceVersion: "805692"
+    uid: e9059b8b-4906-4672-89c2-fac21fbb212d
+  spec:
+    clusterIP: 10.0.77.13
+    clusterIPs:
+    - 10.0.77.13
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 9443
+    selector:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"},"name":"opentelemetry-operator-controller-manager","namespace":"opentelemetry-operator-system"},"spec":{"replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"}},"template":{"metadata":{"labels":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"}},"spec":{"containers":[{"args":["--metrics-addr=127.0.0.1:8080","--enable-leader-election","--zap-log-level=info","--zap-time-encoding=rfc3339nano","--enable-nginx-instrumentation=true"],"env":[{"name":"SERVICE_ACCOUNT_NAME","valueFrom":{"fieldRef":{"fieldPath":"spec.serviceAccountName"}}}],"image":"ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.101.0","livenessProbe":{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":15,"periodSeconds":20},"name":"manager","ports":[{"containerPort":9443,"name":"webhook-server","protocol":"TCP"}],"readinessProbe":{"httpGet":{"path":"/readyz","port":8081},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"requests":{"cpu":"100m","memory":"64Mi"}},"volumeMounts":[{"mountPath":"/tmp/k8s-webhook-server/serving-certs","name":"cert","readOnly":true}]},{"args":["--secure-listen-address=0.0.0.0:8443","--upstream=http://127.0.0.1:8080/","--logtostderr=true","--v=0"],"image":"gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1","name":"kube-rbac-proxy","ports":[{"containerPort":8443,"name":"https","protocol":"TCP"}],"resources":{"limits":{"cpu":"500m","memory":"128Mi"},"requests":{"cpu":"5m","memory":"64Mi"}}}],"serviceAccountName":"opentelemetry-operator-controller-manager","terminationGracePeriodSeconds":10,"volumes":[{"name":"cert","secret":{"defaultMode":420,"secretName":"opentelemetry-operator-controller-manager-service-cert"}}]}}}}
+    creationTimestamp: "2025-12-27T14:07:28Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+    name: opentelemetry-operator-controller-manager
+    namespace: opentelemetry-operator-system
+    resourceVersion: "805862"
+    uid: 400a8fa8-87ff-4b4a-92f4-8c85041bc868
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: opentelemetry-operator
+        control-plane: controller-manager
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/name: opentelemetry-operator
+          control-plane: controller-manager
+      spec:
+        containers:
+        - args:
+          - --metrics-addr=127.0.0.1:8080
+          - --enable-leader-election
+          - --zap-log-level=info
+          - --zap-time-encoding=rfc3339nano
+          - --enable-nginx-instrumentation=true
+          env:
+          - name: SERVICE_ACCOUNT_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.serviceAccountName
+          image: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.101.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: manager
+          ports:
+          - containerPort: 9443
+            name: webhook-server
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: cert
+            readOnly: true
+        - args:
+          - --secure-listen-address=0.0.0.0:8443
+          - --upstream=http://127.0.0.1:8080/
+          - --logtostderr=true
+          - --v=0
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy
+          ports:
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 5m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: opentelemetry-operator-controller-manager
+        serviceAccountName: opentelemetry-operator-controller-manager
+        terminationGracePeriodSeconds: 10
+        volumes:
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: opentelemetry-operator-controller-manager-service-cert
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-27T14:07:45Z"
+      lastUpdateTime: "2025-12-27T14:07:45Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-27T14:07:28Z"
+      lastUpdateTime: "2025-12-27T14:07:45Z"
+      message: ReplicaSet "opentelemetry-operator-controller-manager-6668dc5cb6" has
+        successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2025-12-27T14:07:28Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+      pod-template-hash: 6668dc5cb6
+    name: opentelemetry-operator-controller-manager-6668dc5cb6
+    namespace: opentelemetry-operator-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: opentelemetry-operator-controller-manager
+      uid: 400a8fa8-87ff-4b4a-92f4-8c85041bc868
+    resourceVersion: "805861"
+    uid: 5be37d0d-041b-405b-83f9-c6ec71e29797
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: opentelemetry-operator
+        control-plane: controller-manager
+        pod-template-hash: 6668dc5cb6
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/name: opentelemetry-operator
+          control-plane: controller-manager
+          pod-template-hash: 6668dc5cb6
+      spec:
+        containers:
+        - args:
+          - --metrics-addr=127.0.0.1:8080
+          - --enable-leader-election
+          - --zap-log-level=info
+          - --zap-time-encoding=rfc3339nano
+          - --enable-nginx-instrumentation=true
+          env:
+          - name: SERVICE_ACCOUNT_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.serviceAccountName
+          image: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.101.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: manager
+          ports:
+          - containerPort: 9443
+            name: webhook-server
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: cert
+            readOnly: true
+        - args:
+          - --secure-listen-address=0.0.0.0:8443
+          - --upstream=http://127.0.0.1:8080/
+          - --logtostderr=true
+          - --v=0
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy
+          ports:
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 5m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: opentelemetry-operator-controller-manager
+        serviceAccountName: opentelemetry-operator-controller-manager
+        terminationGracePeriodSeconds: 10
+        volumes:
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: opentelemetry-operator-controller-manager-service-cert
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+kind: List
+metadata:
+  resourceVersion: ""
