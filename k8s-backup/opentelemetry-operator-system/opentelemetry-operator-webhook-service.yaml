@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"opentelemetry-operator"},"name":"opentelemetry-operator-webhook-service","namespace":"opentelemetry-operator-system"},"spec":{"ports":[{"port":443,"protocol":"TCP","targetPort":9443}],"selector":{"app.kubernetes.io/name":"opentelemetry-operator","control-plane":"controller-manager"}}}
+  creationTimestamp: "2025-12-27T14:07:27Z"
+  labels:
+    app.kubernetes.io/name: opentelemetry-operator
+  name: opentelemetry-operator-webhook-service
+  namespace: opentelemetry-operator-system
+  resourceVersion: "805692"
+  uid: e9059b8b-4906-4672-89c2-fac21fbb212d
+spec:
+  clusterIP: 10.0.77.13
+  clusterIPs:
+  - 10.0.77.13
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    app.kubernetes.io/name: opentelemetry-operator
+    control-plane: controller-manager
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

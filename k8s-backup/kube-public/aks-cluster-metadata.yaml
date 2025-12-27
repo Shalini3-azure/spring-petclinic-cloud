@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  clusterResourceId: /subscriptions/1fd8a517-c2f0-4312-a647-eed6e74fa0f5/resourceGroups/k8s-rg/providers/Microsoft.ContainerService/managedClusters/k8s-aks
+immutable: true
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-12-25T19:04:24Z"
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists
+  name: aks-cluster-metadata
+  namespace: kube-public
+  resourceVersion: "473"
+  uid: caef5c74-8bfc-4192-b253-0e16e935001f

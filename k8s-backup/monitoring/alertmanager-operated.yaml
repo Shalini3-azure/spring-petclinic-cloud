@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-12-27T11:11:55Z"
+  labels:
+    app.kubernetes.io/managed-by: prometheus-operator
+    managed-by: prometheus-operator
+    operated-alertmanager: "true"
+  name: alertmanager-operated
+  namespace: monitoring
+  ownerReferences:
+  - apiVersion: monitoring.coreos.com/v1
+    kind: Alertmanager
+    name: obs-kube-prometheus-stack-alertmanager
+    uid: 0e1260a3-3273-443d-a3e8-77cae10d14c9
+  resourceVersion: "741418"
+  uid: 4005baa4-c967-4f96-94bd-21dcd5438c76
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-web
+    port: 9093
+    protocol: TCP
+    targetPort: http-web
+  - name: tcp-mesh
+    port: 9094
+    protocol: TCP
+    targetPort: mesh-tcp
+  - name: udp-mesh
+    port: 9094
+    protocol: UDP
+    targetPort: mesh-udp
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: alertmanager
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

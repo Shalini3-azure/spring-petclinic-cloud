@@ -1,0 +1,230 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    deprecated.daemonset.template.generation: "1"
+  creationTimestamp: "2025-12-25T19:03:57Z"
+  generation: 1
+  labels:
+    app: azure-cns
+    app.kubernetes.io/managed-by: Eno
+    kubernetes.azure.com/managedby: aks
+  name: azure-cns
+  namespace: kube-system
+  resourceVersion: "1469"
+  uid: b78a6ccf-8ec4-433f-87a4-92db57f88fb2
+spec:
+  minReadySeconds: 10
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: azure-cns
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/daemonset-pod: "true"
+        kubernetes.azure.com/azure-cns-configmap-checksum: 468f7d8ad37b5a7dc0fce14e7a2b90d428913bf30d37e8d474e70608847d8cd7
+        prometheus.io/port: "10092"
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/managed-by: Eno
+        k8s-app: azure-cns
+        kubernetes.azure.com/managedby: aks
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.azure.com/cluster
+                operator: Exists
+              - key: type
+                operator: NotIn
+                values:
+                - virtual-kubelet
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+              - key: kubernetes.azure.com/ebpf-dataplane
+                operator: NotIn
+                values:
+                - cilium
+      containers:
+      - args:
+        - -c
+        - tcp://$(CNSIpAddress):$(CNSPort)
+        - -t
+        - $(CNSLogTarget)
+        - -o
+        - $(CNSLogDir)
+        env:
+        - name: CNSIpAddress
+          value: 127.0.0.1
+        - name: CNSPort
+          value: "10090"
+        - name: CNSLogTarget
+          value: stdoutfile
+        - name: CNSLogDir
+          value: /var/log
+        - name: CNS_CONFIGURATION_PATH
+          value: /etc/azure-cns/cns_config.json
+        - name: NODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: POD_CIDRs
+          value: 10.244.0.0/16
+        - name: SERVICE_CIDRs
+          value: 10.0.0.0/16
+        - name: INFRA_VNET_CIDRs
+          value: 10.224.0.0/12
+        image: mcr.microsoft.com/containernetworking/azure-cns:v1.7.9-0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: metrics
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: cns-container
+        ports:
+        - containerPort: 10090
+          name: api
+          protocol: TCP
+        - containerPort: 10092
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /readyz
+            port: metrics
+            scheme: HTTP
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 40m
+            memory: 250Mi
+          requests:
+            cpu: 40m
+            memory: 250Mi
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /healthz
+            port: metrics
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/log
+          name: log
+        - mountPath: /var/lib/azure-network
+          name: cns-state
+        - mountPath: /etc/azure-cns
+          name: cns-config
+        - mountPath: /opt/cni/bin
+          name: cni-bin
+        - mountPath: /var/run/azure-vnet
+          name: azure-vnet
+        - mountPath: /var/lock/azure-vnet
+          name: cni-lock
+        - mountPath: /var/run/azure-vnet.json
+          name: legacy-cni-state
+        - mountPath: /etc/cni/net.d
+          name: cni-conflist
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      initContainers:
+      - args:
+        - deploy
+        - --skip-verify
+        - azure-vnet
+        - -o
+        - /opt/cni/bin/azure-vnet
+        - azure-vnet-telemetry
+        - -o
+        - /opt/cni/bin/azure-vnet-telemetry
+        command:
+        - /dropgz
+        image: mcr.microsoft.com/containernetworking/azure-cni:v1.7.9-0
+        imagePullPolicy: IfNotPresent
+        name: cni-installer
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/cni/bin
+          name: cni-bin
+        - mountPath: /etc/cni/net.d
+          name: cni-conflist
+      priorityClassName: system-node-critical
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: azure-cns
+      serviceAccountName: azure-cns
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      - effect: NoSchedule
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /var/log/azure-cns
+          type: DirectoryOrCreate
+        name: log
+      - hostPath:
+          path: /var/lib/azure-network
+          type: DirectoryOrCreate
+        name: cns-state
+      - hostPath:
+          path: /opt/cni/bin
+          type: Directory
+        name: cni-bin
+      - hostPath:
+          path: /var/run/azure-vnet
+          type: DirectoryOrCreate
+        name: azure-vnet
+      - hostPath:
+          path: /var/lock/azure-vnet
+          type: DirectoryOrCreate
+        name: cni-lock
+      - hostPath:
+          path: /var/run/azure-vnet.json
+          type: FileOrCreate
+        name: legacy-cni-state
+      - hostPath:
+          path: /etc/cni/net.d
+          type: Directory
+        name: cni-conflist
+      - configMap:
+          defaultMode: 420
+          name: cns-config
+        name: cns-config
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 2%
+    type: RollingUpdate
+status:
+  currentNumberScheduled: 2
+  desiredNumberScheduled: 2
+  numberAvailable: 2
+  numberMisscheduled: 0
+  numberReady: 2
+  observedGeneration: 1
+  updatedNumberScheduled: 2

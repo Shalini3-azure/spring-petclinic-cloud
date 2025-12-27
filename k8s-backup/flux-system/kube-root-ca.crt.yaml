@@ -1,0 +1,44 @@
+apiVersion: v1
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIE6TCCAtGgAwIBAgIRANjIASdOWLDr5cLe9sHObDAwDQYJKoZIhvcNAQELBQAw
+    DTELMAkGA1UEAxMCY2EwIBcNMjUxMjI1MTg1MzA3WhgPMjA1NTEyMjUxOTAzMDda
+    MA0xCzAJBgNVBAMTAmNhMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA
+    zqFJiTcp7nF98f+S2d8DjhNxiu5pca1OZSKnR98sbr62SWJC44ukXV4UJnKODzX9
+    WEXZuT7d9VoqJS+ozUTxw+HHWDvFR+6nXZCchAZW7Xwruy/b97WyvX8G2zncbV+D
+    5omRmj5MV9k/yrEI1pZKOkXN2e0qosAheLWu7FAFz3rzr0D78kf6Dvy+cyDjS3UF
+    wV+gIMb4eb/bU2BwfYSfOdyPbyDNksJBIlD4y+bAwFnj7F2Cf6oZnDCIWkmhCO4Y
+    SxIHgQsTISHW/+8TWbVipNU0dcwMBtR0cLDXiVr9xfy2qUd5eVuFIV71S0Dp23U3
+    n7qBFgEZj5bhZgfx7B5P79cvien6JWh5XyyDGIH9LNZIRyva4vLjjireW6dpdhlY
+    6RnvWBEgbdyfR7DZXWwJTBo+JTShvaRn+fAcyQThs9QkbbB0RCg7oSgCTyeYG0FY
+    5nupLcMoMc3hm4+vKiK5Dl0SEhfuP7cCeDZ6uOsNuzwR2P1tO1VTR+6zKpiaBkMh
+    tuO7gUkwpGI5wRAJb2OJ6aXBhf6iZyFAZqqXFs3XySWw/HJvw+hHRf+rYilLjMql
+    S+ctfsS0QZyKZLhdKpsjXTcMMiOS+3PgGGQnUVvI8eOcCUbQPprpKsnDlefXT4sU
+    pQHRJle+6fSp5MH2KoNbNLqkYXZvgfdzsmQrUYaCcD0CAwEAAaNCMEAwDgYDVR0P
+    AQH/BAQDAgKkMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFHPaXTqKELnri6JY
+    CK4wZUHjcps2MA0GCSqGSIb3DQEBCwUAA4ICAQAEcabxwprY9W5EskXP/CyG3AfG
+    XdknmriAy7HOTqdP8RPvHRKi1BTnhMx7+xWQwVaaU5h+b2fc1ilZJGG2ddlzwxRh
+    A1s0wE4D45hrF50gEPEd2ynFr15k9UIV5tTk7WDpOaSFz84SeddyDGGnAnOZhb5f
+    ZTGVcYhRLIVmfSPbjrzEcy+IUPa+Fyox13zLCLC+kcK7TO/MOoxlo1bpRfBWtLCM
+    RCOsMxFDLwpr+S6zzeW9ZKtS9l+hFhbOH3jcKKvkjpDSwhjaoaWPqheOW/mZu3EM
+    iHtfRfwNLtrzn+4MTeDH6gmRzVUO7lOQcs8sIMwrVqUpz/4x2mktX+CbV4zXPGvL
+    oa/orqXufuKvNFHc5S5d7tKV0JdSVwJNMKG5LNZJYhVOce/FJaqzKOuH8M/YR+rk
+    yuL7H9YKqR17rCIan3zSBhJTIPPxeBrgqZz7j0gagWA1RWRNHUExYXN55sNRxiKU
+    29FQLt1ALT6OMHbnbtmMrRH5vrh+WhwE6HT9wfcLUJqJX7s/t4+kol3Oni8QCw1Y
+    mAvOjsyttlnzI1eh7Qo4c6tmdaRXn9gN9wOfHkBONYDWYT3eGUeYPXsuP94VSOAI
+    MyGcg/9qJDdQBf7rrefI/0doTLCivkyN00+/+6Uw3/Hp04j1wA+7V7xnUTpKCdrv
+    y4BESdZ44T2cNIrPmg==
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  annotations:
+    kubernetes.io/description: Contains a CA bundle that can be used to verify the
+      kube-apiserver when using internal endpoints such as the internal service IP
+      or kubernetes.default.svc. No other usage is guaranteed across distributions
+      of Kubernetes clusters.
+  creationTimestamp: "2025-12-26T16:12:55Z"
+  name: kube-root-ca.crt
+  namespace: flux-system
+  resourceVersion: "344066"
+  uid: 49fd1b3f-25de-4261-aab8-87b0eea4336a

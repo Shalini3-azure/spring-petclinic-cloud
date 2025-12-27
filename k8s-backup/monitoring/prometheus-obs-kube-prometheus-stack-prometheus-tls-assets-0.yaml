@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  0_monitoring_obs-kube-prometheus-stack-admission_ca: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkRENDQVJ1Z0F3SUJBZ0lRZW5iSlZsVUZsbFZhVERVRHhLc3hhVEFLQmdncWhrak9QUVFEQWpBUE1RMHcKQ3dZRFZRUUtFd1J1YVd3eE1DQVhEVEkxTVRJeU56RXhNRFkwTVZvWUR6SXhNalV4TWpBek1URXdOalF4V2pBUApNUTB3Q3dZRFZRUUtFd1J1YVd3eE1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRTNxRDJTMXVpClF4TmpWK3FQUTcxR2s0S0lBZEc0dkR1SWxXU1J1Z0FiQ3gvZnQzY0FvOXFUTUVxdkY5ZWdidWt3cjFHbnQ0Q0UKc0ZmSDBHK0JadytramFOWE1GVXdEZ1lEVlIwUEFRSC9CQVFEQWdJRU1CTUdBMVVkSlFRTU1Bb0dDQ3NHQVFVRgpCd01CTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRkxjZlFpRlYyUkI1NkRwSmh3VkpNbTRqCkorb0RNQW9HQ0NxR1NNNDlCQU1DQTBjQU1FUUNJRStEQ3EwTnFOV3VsYWp0a1EyWHBWTEJMTHZ6alJlWVJGTksKM2NQMXVjQlRBaUJOZi93VkxLN0RCUzZEOXB4V1RWRTVQWldZVU4yTDUxR3htV1g5OU5rZFJnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+kind: Secret
+metadata:
+  creationTimestamp: "2025-12-27T11:11:55Z"
+  labels:
+    app.kubernetes.io/managed-by: prometheus-operator
+    managed-by: prometheus-operator
+  name: prometheus-obs-kube-prometheus-stack-prometheus-tls-assets-0
+  namespace: monitoring
+  ownerReferences:
+  - apiVersion: monitoring.coreos.com/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Prometheus
+    name: obs-kube-prometheus-stack-prometheus
+    uid: 3552afec-6ab4-45c6-9fe0-acf52932b48e
+  resourceVersion: "741447"
+  uid: 9fa90b77-9515-44ec-8a2b-91c3766f6bd7
+type: Opaque

@@ -1,0 +1,54 @@
+apiVersion: v1
+data:
+  collector.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    exporters:
+      debug:
+        verbosity: detailed
+      otlp:
+        endpoint: tempo:4317
+        tls:
+          insecure: true
+    service:
+      telemetry:
+        metrics:
+          readers:
+            - pull:
+                exporter:
+                  prometheus:
+                    host: 0.0.0.0
+                    port: 8888
+      pipelines:
+        traces:
+          exporters:
+            - debug
+            - otlp
+          receivers:
+            - otlp
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-12-27T13:45:59Z"
+  labels:
+    app.kubernetes.io/component: opentelemetry-collector
+    app.kubernetes.io/instance: monitoring.otel-collector
+    app.kubernetes.io/managed-by: opentelemetry-operator
+    app.kubernetes.io/name: otel-collector-collector
+    app.kubernetes.io/part-of: opentelemetry
+    app.kubernetes.io/version: latest
+  name: otel-collector-collector-97b2cf8c
+  namespace: monitoring
+  ownerReferences:
+  - apiVersion: opentelemetry.io/v1beta1
+    blockOwnerDeletion: true
+    controller: true
+    kind: OpenTelemetryCollector
+    name: otel-collector
+    uid: beada918-dc8d-4655-85c3-1d9fe0d77879
+  resourceVersion: "797861"
+  uid: b27c99d7-c5f3-4ab5-be57-4f43e00f71f3

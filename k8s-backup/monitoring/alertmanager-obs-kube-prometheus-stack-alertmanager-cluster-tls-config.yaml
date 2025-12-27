@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  cluster-tls-config.yaml: ""
+kind: Secret
+metadata:
+  creationTimestamp: "2025-12-27T11:11:55Z"
+  labels:
+    app.kubernetes.io/managed-by: prometheus-operator
+    managed-by: prometheus-operator
+  name: alertmanager-obs-kube-prometheus-stack-alertmanager-cluster-tls-config
+  namespace: monitoring
+  ownerReferences:
+  - apiVersion: monitoring.coreos.com/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Alertmanager
+    name: obs-kube-prometheus-stack-alertmanager
+    uid: 0e1260a3-3273-443d-a3e8-77cae10d14c9
+  resourceVersion: "741417"
+  uid: 036be99e-dcbb-4b32-ab44-1c97e47f57df
+type: Opaque

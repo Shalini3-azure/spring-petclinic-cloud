@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    deprecated.daemonset.template.generation: "1"
+  creationTimestamp: "2025-12-25T19:03:57Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Eno
+    component: azure-ip-masq-agent
+    kubernetes.azure.com/managedby: aks
+    tier: node
+  name: azure-ip-masq-agent
+  namespace: kube-system
+  resourceVersion: "1944"
+  uid: 84e8463b-7957-46d9-929a-1571703a9e16
+spec:
+  minReadySeconds: 60
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: azure-ip-masq-agent
+      tier: node
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/managed-by: Eno
+        k8s-app: azure-ip-masq-agent
+        kubernetes.azure.com/managedby: aks
+        tier: node
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.azure.com/cluster
+                operator: Exists
+              - key: type
+                operator: NotIn
+                values:
+                - virtual-kubelet
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      automountServiceAccountToken: false
+      containers:
+      - args:
+        - --v=2
+        - --resync-interval=60
+        image: mcr.microsoft.com/oss/v2/azure/ip-masq-agent-v2:v0.1.15-4
+        imagePullPolicy: IfNotPresent
+        name: azure-ip-masq-agent
+        resources:
+          limits:
+            cpu: 500m
+            memory: 250Mi
+          requests:
+            cpu: 50m
+            memory: 36Mi
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+            - NET_RAW
+            drop:
+            - ALL
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/config
+          name: azure-ip-masq-agent-config-volume
+        - mountPath: /run/xtables.lock
+          name: iptableslock
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      priorityClassName: system-node-critical
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      - effect: NoSchedule
+        operator: Exists
+      volumes:
+      - name: azure-ip-masq-agent-config-volume
+        projected:
+          defaultMode: 420
+          sources:
+          - configMap:
+              items:
+              - key: ip-masq-agent
+                mode: 444
+                path: ip-masq-agent
+              name: azure-ip-masq-agent-config
+              optional: true
+          - configMap:
+              items:
+              - key: ip-masq-agent-reconciled
+                mode: 444
+                path: ip-masq-agent-reconciled
+              name: azure-ip-masq-agent-config-reconciled
+              optional: true
+      - hostPath:
+          path: /run/xtables.lock
+          type: FileOrCreate
+        name: iptableslock
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 25%
+    type: RollingUpdate
+status:
+  currentNumberScheduled: 2
+  desiredNumberScheduled: 2
+  numberAvailable: 2
+  numberMisscheduled: 0
+  numberReady: 2
+  observedGeneration: 1
+  updatedNumberScheduled: 2

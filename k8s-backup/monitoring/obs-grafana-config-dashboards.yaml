@@ -1,0 +1,32 @@
+apiVersion: v1
+data:
+  provider.yaml: |-
+    apiVersion: 1
+    providers:
+      - name: 'sidecarProvider'
+        orgId: 1
+        folder: ''
+        folderUid: ''
+        type: file
+        disableDeletion: false
+        allowUiUpdates: false
+        updateIntervalSeconds: 30
+        options:
+          foldersFromFilesStructure: false
+          path: /tmp/dashboards
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: obs
+    meta.helm.sh/release-namespace: monitoring
+  creationTimestamp: "2025-12-27T11:11:48Z"
+  labels:
+    app.kubernetes.io/instance: obs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.0
+    helm.sh/chart: grafana-10.4.0
+  name: obs-grafana-config-dashboards
+  namespace: monitoring
+  resourceVersion: "741140"
+  uid: 26da4792-7df0-494e-8561-866a0c497077

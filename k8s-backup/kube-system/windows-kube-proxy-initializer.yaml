@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    deprecated.daemonset.template.generation: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"DaemonSet","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"windows-kube-proxy-initializer","kubernetes.azure.com/managedby":"aks","kubernetes.io/cluster-service":"true"},"name":"windows-kube-proxy-initializer","namespace":"kube-system"},"spec":{"selector":{"matchLabels":{"k8s-app":"windows-kube-proxy-initializer"}},"template":{"metadata":{"annotations":{"cluster-autoscaler.kubernetes.io/daemonset-pod":"true"},"labels":{"k8s-app":"windows-kube-proxy-initializer","kubernetes.azure.com/managedby":"aks"}},"spec":{"affinity":{"nodeAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":{"nodeSelectorTerms":[{"matchExpressions":[{"key":"kubernetes.azure.com/cluster","operator":"Exists"},{"key":"type","operator":"NotIn","values":["virtual-kubelet"]},{"key":"kubernetes.io/os","operator":"In","values":["windows"]}]}]}}},"containers":[{"image":"mcr.microsoft.com/oss/v2/kubernetes/pause:3.10.1","imagePullPolicy":"IfNotPresent","name":"pause"}],"priorityClassName":"system-node-critical","tolerations":[{"key":"CriticalAddonsOnly","operator":"Exists"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master","operator":"Equal","value":"true"},{"effect":"NoExecute","operator":"Exists"},{"effect":"NoSchedule","operator":"Exists"}]}}}}
+  creationTimestamp: "2025-12-25T19:04:32Z"
+  generation: 1
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    k8s-app: windows-kube-proxy-initializer
+    kubernetes.azure.com/managedby: aks
+    kubernetes.io/cluster-service: "true"
+  name: windows-kube-proxy-initializer
+  namespace: kube-system
+  resourceVersion: "691"
+  uid: 3f51e3ca-f21c-4159-8ec4-f3879d893c34
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: windows-kube-proxy-initializer
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/daemonset-pod: "true"
+      creationTimestamp: null
+      labels:
+        k8s-app: windows-kube-proxy-initializer
+        kubernetes.azure.com/managedby: aks
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.azure.com/cluster
+                operator: Exists
+              - key: type
+                operator: NotIn
+                values:
+                - virtual-kubelet
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - windows
+      containers:
+      - image: mcr.microsoft.com/oss/v2/kubernetes/pause:3.10.1
+        imagePullPolicy: IfNotPresent
+        name: pause
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      priorityClassName: system-node-critical
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Equal
+        value: "true"
+      - effect: NoExecute
+        operator: Exists
+      - effect: NoSchedule
+        operator: Exists
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+status:
+  currentNumberScheduled: 0
+  desiredNumberScheduled: 0
+  numberMisscheduled: 0
+  numberReady: 0
+  observedGeneration: 1

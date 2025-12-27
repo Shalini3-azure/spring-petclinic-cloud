@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"api-gateway-external","namespace":"spring-petclinic"},"spec":{"ports":[{"port":80,"targetPort":8080}],"selector":{"app":"api-gateway"},"type":"LoadBalancer"}}
+  creationTimestamp: "2025-12-27T09:46:47Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  name: api-gateway-external
+  namespace: spring-petclinic
+  resourceVersion: "711930"
+  uid: 56f262ad-e168-41e7-83f6-78cbffcbb30b
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.0.241.155
+  clusterIPs:
+  - 10.0.241.155
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 31025
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: api-gateway
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 135.237.38.218
+      ipMode: VIP

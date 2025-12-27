@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: obs
+    meta.helm.sh/release-namespace: monitoring
+  creationTimestamp: "2025-12-27T11:11:50Z"
+  labels:
+    app: kube-prometheus-stack-kube-controller-manager
+    app.kubernetes.io/instance: obs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 80.7.0
+    chart: kube-prometheus-stack-80.7.0
+    heritage: Helm
+    jobLabel: kube-controller-manager
+    release: obs
+  name: obs-kube-prometheus-stack-kube-controller-manager
+  namespace: kube-system
+  resourceVersion: "741202"
+  uid: a9f17c65-9b3e-498a-957d-7f13d372f125
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-metrics
+    port: 10257
+    protocol: TCP
+    targetPort: 10257
+  selector:
+    component: kube-controller-manager
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
