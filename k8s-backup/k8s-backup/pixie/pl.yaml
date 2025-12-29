@@ -1,0 +1,4368 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: kelvin-7b6fdbfb9f-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: kelvin
+      plane: data
+      pod-template-hash: 7b6fdbfb9f
+      vizier-name: pixie
+    name: kelvin-7b6fdbfb9f-n9rnm
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kelvin-7b6fdbfb9f
+      uid: 8c1bf851-41f5-4847-80ec-05dc8b977250
+    resourceVersion: "1735410"
+    uid: 84c936b2-7c2c-462f-8fb6-d38522853e70
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_CLUSTER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+      - name: PL_SENTRY_DSN
+        valueFrom:
+          secretKeyRef:
+            key: sentry-dsn
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_HOST_PATH
+        value: /host
+      - name: PL_POD_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.podIP
+      - name: PL_HOST_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_VIZIER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: TCMALLOC_SAMPLE_PARAMETER
+        value: "1048576"
+      envFrom:
+      - configMapRef:
+          name: pl-tls-config
+      image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      name: app
+      ports:
+      - containerPort: 59300
+        protocol: TCP
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fd8mw
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-cloud-connector-svc
+      - name: SERVICE_PORT
+        value: "50800"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: cc-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fd8mw
+        readOnly: true
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-query-broker-svc
+      - name: SERVICE_PORT
+        value: "50300"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: qb-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fd8mw
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - hostPath:
+        path: /sys
+        type: Directory
+      name: sys
+    - name: kube-api-access-fd8mw
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:48Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:13Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:14Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:14Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://57624700da23d83ce44fc4c2339b0e80dd3bf0880e7b697927410f5335299cb0
+      image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image@sha256:2fe401518759d09cc99a4953de7576c408984c7b273c4a350d99ab6e94a1361a
+      lastState: {}
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:08:13Z"
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fd8mw
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://054031992c28b93e5f8c20202128cf67089fbd92f47a67fc0d97d6cb94e83468
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: cc-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://054031992c28b93e5f8c20202128cf67089fbd92f47a67fc0d97d6cb94e83468
+          exitCode: 0
+          finishedAt: "2025-12-29T10:08:09Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:05:48Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fd8mw
+        readOnly: true
+        recursiveReadOnly: Disabled
+    - containerID: containerd://cf6d11fbb02abd3ec17c53eacd0cfc6abefe29affbc759c8a552e84b7e660817
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: qb-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://cf6d11fbb02abd3ec17c53eacd0cfc6abefe29affbc759c8a552e84b7e660817
+          exitCode: 0
+          finishedAt: "2025-12-29T10:08:12Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:08:10Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fd8mw
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.244.1.132
+    podIPs:
+    - ip: 10.244.1.132
+    qosClass: BestEffort
+    startTime: "2025-12-29T10:05:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: pl-nats-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      apps.kubernetes.io/pod-index: "0"
+      controller-revision-hash: pl-nats-5d6d6dff7c
+      name: pl-nats
+      plane: control
+      statefulset.kubernetes.io/pod-name: pl-nats-0
+      vizier-name: pixie
+    name: pl-nats-0
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: pl-nats
+      uid: 1771190f-759d-46c8-b089-699c20de7996
+    resourceVersion: "1734360"
+    uid: 2bedf0ee-ab45-4856-bfb0-ca6daeb3b1d0
+  spec:
+    containers:
+    - command:
+      - nats-server
+      - --config
+      - /etc/nats-config/nats.conf
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: CLUSTER_ADVERTISE
+        value: $(POD_NAME).pl-nats.$(POD_NAMESPACE).svc
+      image: gcr.io/pixie-oss/pixie-prod/vizier-deps/nats:2.9.19-scratch@sha256:5de59286eb54ead4d4a9279846098d4097b9c17a3c0588182398a7250cde1af9
+      imagePullPolicy: IfNotPresent
+      lifecycle:
+        preStop:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - /nats-server -sl=ldm=/var/run/nats/nats.pid && /bin/sleep 60
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 8222
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: pl-nats
+      ports:
+      - containerPort: 4222
+        name: client
+        protocol: TCP
+      - containerPort: 7422
+        name: leafnodes
+        protocol: TCP
+      - containerPort: 6222
+        name: cluster
+        protocol: TCP
+      - containerPort: 8222
+        name: monitor
+        protocol: TCP
+      - containerPort: 7777
+        name: metrics
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 8222
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/nats-config
+        name: config-volume
+      - mountPath: /etc/nats-server-tls-certs
+        name: nats-server-tls-volume
+      - mountPath: /var/run/nats
+        name: pid
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-qc66m
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: pl-nats-0
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    shareProcessNamespace: true
+    subdomain: pl-nats
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: nats-server-tls-volume
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - configMap:
+        defaultMode: 420
+        name: nats-config
+      name: config-volume
+    - emptyDir: {}
+      name: pid
+    - name: kube-api-access-qc66m
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:47Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:58Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:58Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://4d52e1083d29b39dfde5966af87f9246d8289e1493fb8d22d89a9434cc835a57
+      image: sha256:4ad6c7d3b1be3c0ba5ad262181b43033c367c1fc2c39763f125ec5c6c857570a
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-deps/nats@sha256:5de59286eb54ead4d4a9279846098d4097b9c17a3c0588182398a7250cde1af9
+      lastState: {}
+      name: pl-nats
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:05:47Z"
+      volumeMounts:
+      - mountPath: /etc/nats-config
+        name: config-volume
+      - mountPath: /etc/nats-server-tls-certs
+        name: nats-server-tls-volume
+      - mountPath: /var/run/nats
+        name: pid
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-qc66m
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    phase: Running
+    podIP: 10.244.1.24
+    podIPs:
+    - ip: 10.244.1.24
+    qosClass: BestEffort
+    startTime: "2025-12-29T10:05:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cluster-id: 3f255bb1-3b1f-48da-bf62-95a714cc1ffd
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: vizier-cloud-connector-df45849cc-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      cluster-id: 3f255bb1-3b1f-48da-bf62-95a714cc1ffd
+      component: vizier
+      name: vizier-cloud-connector
+      plane: control
+      pod-template-hash: df45849cc
+      vizier-bootstrap: "true"
+      vizier-name: pixie
+    name: vizier-cloud-connector-df45849cc-g7rzr
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: vizier-cloud-connector-df45849cc
+      uid: aebfee81-b473-418b-9cc3-786550120a32
+    resourceVersion: "1735337"
+    uid: 4725e2b9-b170-4c39-9a49-0bbcab865da1
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_CLUSTER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_DEPLOY_KEY
+        valueFrom:
+          secretKeyRef:
+            key: deploy-key
+            name: pl-deploy-secrets
+            optional: true
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_MAX_EXPECTED_CLOCK_SKEW
+        value: "2000"
+      - name: PL_RENEW_PERIOD
+        value: "7500"
+      envFrom:
+      - configMapRef:
+          name: pl-cloud-config
+      - configMapRef:
+          name: pl-cloud-connector-tls-config
+      - configMapRef:
+          name: pl-cluster-config
+          optional: true
+      image: gcr.io/pixie-oss/pixie-prod/vizier-cloud_connector_server_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 50800
+          scheme: HTTPS
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: app
+      ports:
+      - containerPort: 50800
+        protocol: TCP
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-x8cxc
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+        until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200
+        ]; do echo "waiting for ${URL}"; sleep 2; done;
+      env:
+      - name: SERVICE_NAME
+        value: pl-nats-mgmt
+      - name: SERVICE_PORT
+        value: "8222"
+      - name: HEALTH_PATH
+      - name: PROTOCOL
+        value: http
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: nats-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-x8cxc
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: cloud-conn-service-account
+    serviceAccountName: cloud-conn-service-account
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: kube-api-access-x8cxc
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:48Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:06:11Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:08Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:08Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://d5af831e08273fcae90f2224abfe0b78560ff8657e98c2876ae422a49c775308
+      image: gcr.io/pixie-oss/pixie-prod/vizier-cloud_connector_server_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-cloud_connector_server_image@sha256:9f1c1636f96e325d1a3b12316e77f14c2faf5672aca9e65e43f9eb08a21f6fae
+      lastState:
+        terminated:
+          containerID: containerd://f4d68252b9da31b35cb225c50ee4bef3120cb1e844367e710187c8939adfa4ca
+          exitCode: 1
+          finishedAt: "2025-12-29T10:07:16Z"
+          reason: Error
+          startedAt: "2025-12-29T10:07:16Z"
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 4
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:08:08Z"
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-x8cxc
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://baf3237204088d2101b69fe994988ea3de87aa8a62e13d57ea20a841c6af4af3
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: nats-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://baf3237204088d2101b69fe994988ea3de87aa8a62e13d57ea20a841c6af4af3
+          exitCode: 0
+          finishedAt: "2025-12-29T10:06:10Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:05:48Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-x8cxc
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.244.1.14
+    podIPs:
+    - ip: 10.244.1.14
+    qosClass: BestEffort
+    startTime: "2025-12-29T10:05:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      px.dev/metrics_port: "50400"
+      px.dev/metrics_scrape: "true"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: vizier-metadata-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      apps.kubernetes.io/pod-index: "0"
+      component: vizier
+      controller-revision-hash: vizier-metadata-54694b9648
+      name: vizier-metadata
+      plane: control
+      statefulset.kubernetes.io/pod-name: vizier-metadata-0
+      vizier-name: pixie
+    name: vizier-metadata-0
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: vizier-metadata
+      uid: f8b4de59-7c5e-4098-9d9f-352eb47013b8
+    resourceVersion: "1734785"
+    uid: c71368e9-6744-4dda-a60a-be42e1e83bb4
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_MAX_EXPECTED_CLOCK_SKEW
+        value: "2000"
+      - name: PL_RENEW_PERIOD
+        value: "7500"
+      - name: PL_ETCD_OPERATOR_ENABLED
+        value: "false"
+      envFrom:
+      - configMapRef:
+          name: pl-tls-config
+      image: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 50400
+          scheme: HTTPS
+        initialDelaySeconds: 120
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: app
+      readinessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /healthz
+          port: 50400
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /metadata
+        name: metadata-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-ml92x
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: vizier-metadata-0
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+        until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200
+        ]; do echo "waiting for ${URL}"; sleep 2; done;
+      env:
+      - name: SERVICE_NAME
+        value: pl-nats-mgmt
+      - name: SERVICE_PORT
+        value: "8222"
+      - name: HEALTH_PATH
+      - name: PROTOCOL
+        value: http
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: nats-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-ml92x
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: metadata-service-account
+    serviceAccountName: metadata-service-account
+    subdomain: vizier-metadata
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: metadata-volume
+      persistentVolumeClaim:
+        claimName: metadata-pv-claim
+    - name: kube-api-access-ml92x
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:06:18Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:06:18Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:06:50Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:06:50Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:48Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://860984e30f4b5dba1f7aa0f82d92781e2196e250cbdaf16f945b3dc9794d6039
+      image: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image@sha256:3c2e07eeb209f53c982724173457c8650301e4b36e29d3d93e7196c6e56a7cc5
+      lastState: {}
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:06:18Z"
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /metadata
+        name: metadata-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-ml92x
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://43d54bcb18134fd15b1c3e84ed22d453541c38157a97b1dd763406265ef55de2
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: nats-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://43d54bcb18134fd15b1c3e84ed22d453541c38157a97b1dd763406265ef55de2
+          exitCode: 0
+          finishedAt: "2025-12-29T10:06:17Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:06:17Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-ml92x
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.244.1.139
+    podIPs:
+    - ip: 10.244.1.139
+    qosClass: BestEffort
+    startTime: "2025-12-29T10:05:48Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: vizier-pem-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      controller-revision-hash: 6866b7689c
+      name: vizier-pem
+      plane: data
+      pod-template-generation: "1"
+      vizier-name: pixie
+    name: vizier-pem-c6d25
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: vizier-pem
+      uid: db73e968-9a98-4b25-8127-de8186a0a6a7
+    resourceVersion: "1735408"
+    uid: adc53344-ffd2-4179-b4cd-e5abd12b96eb
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - aks-nodepool1-41991914-vmss000001
+    containers:
+    - env:
+      - name: PL_PEM_ENV_VAR_PLACEHOLDER
+        value: "true"
+      - name: PL_PROFILER_JAVA_SYMBOLS
+        value: "true"
+      - name: PL_TABLE_STORE_DATA_LIMIT_MB
+        value: "1228"
+      - name: PX_DEBUG_TLS_SOURCES
+        value: "false"
+      - name: PX_TRACE_STATIC_TLS_BINARIES
+        value: "true"
+      - name: TCMALLOC_SAMPLE_PARAMETER
+        value: "1048576"
+      - name: PL_CLIENT_TLS_CERT
+        value: /certs/client.crt
+      - name: PL_CLIENT_TLS_KEY
+        value: /certs/client.key
+      - name: PL_TLS_CA_CERT
+        value: /certs/ca.crt
+      - name: PL_DISABLE_SSL
+        value: "false"
+      - name: PL_HOST_PATH
+        value: /host
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_HOST_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_VIZIER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_CLOCK_CONVERTER
+        value: default
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      name: pem
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      securityContext:
+        capabilities:
+          add:
+          - SYS_PTRACE
+          - SYS_ADMIN
+        privileged: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wzl5
+        readOnly: true
+    dnsPolicy: ClusterFirstWithHostNet
+    enableServiceLinks: true
+    hostNetwork: true
+    hostPID: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-query-broker-svc
+      - name: SERVICE_PORT
+        value: "50300"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: qb-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wzl5
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 10
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/pid-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /
+        type: Directory
+      name: host-root
+    - hostPath:
+        path: /sys
+        type: Directory
+      name: sys
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: kube-api-access-5wzl5
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:48Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:13Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:14Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:14Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        memory: 2Gi
+      containerID: containerd://9a7ba78f1c2b29ba4e7076908d21b20f2c805130f4708e02cb8dc7c75e7ac9c9
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-pem_image@sha256:e17e8b40fda3a51a385581578e34154e2c4b7f629903bec647c8465837fda121
+      lastState: {}
+      name: pem
+      ready: true
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:08:14Z"
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wzl5
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://c9e5615faada5100936964922d72d12d75172611eea5bb8c5fb5476d64581e48
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: qb-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://c9e5615faada5100936964922d72d12d75172611eea5bb8c5fb5476d64581e48
+          exitCode: 0
+          finishedAt: "2025-12-29T10:08:13Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:05:48Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wzl5
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.224.0.5
+    podIPs:
+    - ip: 10.224.0.5
+    qosClass: Burstable
+    startTime: "2025-12-29T10:05:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: vizier-pem-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      controller-revision-hash: 6866b7689c
+      name: vizier-pem
+      plane: data
+      pod-template-generation: "1"
+      vizier-name: pixie
+    name: vizier-pem-f9zd6
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: vizier-pem
+      uid: db73e968-9a98-4b25-8127-de8186a0a6a7
+    resourceVersion: "1735432"
+    uid: e7f4af11-b594-44a4-a480-6c00c86e9812
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - aks-nodepool1-41991914-vmss000000
+    containers:
+    - env:
+      - name: PL_PEM_ENV_VAR_PLACEHOLDER
+        value: "true"
+      - name: PL_PROFILER_JAVA_SYMBOLS
+        value: "true"
+      - name: PL_TABLE_STORE_DATA_LIMIT_MB
+        value: "1228"
+      - name: PX_DEBUG_TLS_SOURCES
+        value: "false"
+      - name: PX_TRACE_STATIC_TLS_BINARIES
+        value: "true"
+      - name: TCMALLOC_SAMPLE_PARAMETER
+        value: "1048576"
+      - name: PL_CLIENT_TLS_CERT
+        value: /certs/client.crt
+      - name: PL_CLIENT_TLS_KEY
+        value: /certs/client.key
+      - name: PL_TLS_CA_CERT
+        value: /certs/ca.crt
+      - name: PL_DISABLE_SSL
+        value: "false"
+      - name: PL_HOST_PATH
+        value: /host
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_HOST_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_VIZIER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_CLOCK_CONVERTER
+        value: default
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      name: pem
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      securityContext:
+        capabilities:
+          add:
+          - SYS_PTRACE
+          - SYS_ADMIN
+        privileged: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-kv9f7
+        readOnly: true
+    dnsPolicy: ClusterFirstWithHostNet
+    enableServiceLinks: true
+    hostNetwork: true
+    hostPID: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-query-broker-svc
+      - name: SERVICE_PORT
+        value: "50300"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: qb-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-kv9f7
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 10
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/pid-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /
+        type: Directory
+      name: host-root
+    - hostPath:
+        path: /sys
+        type: Directory
+      name: sys
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: kube-api-access-kv9f7
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:47Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:15Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:16Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:16Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        memory: 2Gi
+      containerID: containerd://27682d54c2c4ef265131c7e7821547312ea52311ba313020ef8a40d88ece631a
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-pem_image@sha256:e17e8b40fda3a51a385581578e34154e2c4b7f629903bec647c8465837fda121
+      lastState: {}
+      name: pem
+      ready: true
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:08:15Z"
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-kv9f7
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    initContainerStatuses:
+    - containerID: containerd://fd43b3d5a6e4311a62efa0db9e882404de589fc42b2f81df69f60faef36c446e
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: qb-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://fd43b3d5a6e4311a62efa0db9e882404de589fc42b2f81df69f60faef36c446e
+          exitCode: 0
+          finishedAt: "2025-12-29T10:08:14Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:05:47Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-kv9f7
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.224.0.4
+    podIPs:
+    - ip: 10.224.0.4
+    qosClass: Burstable
+    startTime: "2025-12-29T10:05:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      px.dev/metrics_port: "50300"
+      px.dev/metrics_scrape: "true"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generateName: vizier-query-broker-765664495f-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 765664495f
+      vizier-name: pixie
+    name: vizier-query-broker-765664495f-5sv7h
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: vizier-query-broker-765664495f
+      uid: 7c8834c4-5642-4daa-9980-e6bd4831e64e
+    resourceVersion: "1735382"
+    uid: 9be5c7c3-d08b-4dc8-9bc5-8c4c408952bc
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_CLUSTER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+      - name: PL_SENTRY_DSN
+        valueFrom:
+          secretKeyRef:
+            key: sentry-dsn
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_POD_IP_ADDRESS
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.podIP
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_CLOUD_ADDR
+        valueFrom:
+          configMapKeyRef:
+            key: PL_CLOUD_ADDR
+            name: pl-cloud-config
+      - name: PL_DATA_ACCESS
+        value: Full
+      envFrom:
+      - configMapRef:
+          name: pl-tls-config
+      image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 50300
+          scheme: HTTPS
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: app
+      ports:
+      - containerPort: 50300
+        protocol: TCP
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-tbwmz
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-cloud-connector-svc
+      - name: SERVICE_PORT
+        value: "50800"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: cc-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-tbwmz
+        readOnly: true
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-metadata-svc
+      - name: SERVICE_PORT
+        value: "50400"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: mds-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-tbwmz
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: query-broker-service-account
+    serviceAccountName: query-broker-service-account
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - configMap:
+        defaultMode: 420
+        name: proxy-envoy-config
+      name: envoy-yaml
+    - name: kube-api-access-tbwmz
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:48Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:11Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:12Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:08:12Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T10:05:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://2a877cae2790b14651623a47f5894975d866bce329f3f8e3f8685cc71ba8232e
+      image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image@sha256:d20204368b519a1bf9a04662ea276b70522a45837199a32791f01993b2dc5426
+      lastState: {}
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T10:08:11Z"
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-tbwmz
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://bb612cf72323e4a1595836161cd2b6199f7be5f4f9e16bceec808dee0b1b5047
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: cc-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://bb612cf72323e4a1595836161cd2b6199f7be5f4f9e16bceec808dee0b1b5047
+          exitCode: 0
+          finishedAt: "2025-12-29T10:08:09Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:05:48Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-tbwmz
+        readOnly: true
+        recursiveReadOnly: Disabled
+    - containerID: containerd://d00f9e3788e51d41e683382623f671337f5732135e5b1f70a9cbb9febece7e2b
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: mds-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://d00f9e3788e51d41e683382623f671337f5732135e5b1f70a9cbb9febece7e2b
+          exitCode: 0
+          finishedAt: "2025-12-29T10:08:10Z"
+          reason: Completed
+          startedAt: "2025-12-29T10:08:10Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-tbwmz
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.244.1.34
+    podIPs:
+    - ip: 10.244.1.34
+    qosClass: BestEffort
+    startTime: "2025-12-29T10:05:46Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: kelvin-service
+    namespace: pl
+    resourceVersion: "1734143"
+    uid: e75f5340-bbf7-4942-aa66-b94ed1667a27
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 59300
+      protocol: TCP
+      targetPort: 59300
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: kelvin
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      name: pl-nats
+      vizier-name: pixie
+    name: pl-nats
+    namespace: pl
+    resourceVersion: "1734095"
+    uid: 2e4b0cbb-c0ac-4c5e-bc51-894b389bef35
+  spec:
+    clusterIP: 10.0.21.10
+    clusterIPs:
+    - 10.0.21.10
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: client
+      port: 4222
+      protocol: TCP
+      targetPort: 4222
+    selector:
+      app: pl-monitoring
+      name: pl-nats
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      name: pl-nats
+      vizier-name: pixie
+    name: pl-nats-mgmt
+    namespace: pl
+    resourceVersion: "1734099"
+    uid: 02222b4e-be98-4c77-9524-cfa652113258
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: cluster
+      port: 6222
+      protocol: TCP
+      targetPort: 6222
+    - name: monitor
+      port: 8222
+      protocol: TCP
+      targetPort: 8222
+    - name: metrics
+      port: 7777
+      protocol: TCP
+      targetPort: 7777
+    - name: leafnodes
+      port: 7422
+      protocol: TCP
+      targetPort: 7422
+    - name: gateways
+      port: 7522
+      protocol: TCP
+      targetPort: 7522
+    selector:
+      app: pl-monitoring
+      name: pl-nats
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-bootstrap: "true"
+      vizier-name: pixie
+    name: vizier-cloud-connector-svc
+    namespace: pl
+    resourceVersion: "1734148"
+    uid: aa13cb7f-cdb4-4e4f-9729-7a030a9fa66a
+  spec:
+    clusterIP: 10.0.74.25
+    clusterIPs:
+    - 10.0.74.25
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 50800
+      protocol: TCP
+      targetPort: 50800
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-cloud-connector
+      vizier-bootstrap: "true"
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-metadata-svc
+    namespace: pl
+    resourceVersion: "1734154"
+    uid: 14349412-2840-40d0-abd9-0000d6978781
+  spec:
+    clusterIP: 10.0.72.35
+    clusterIPs:
+    - 10.0.72.35
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 50400
+      protocol: TCP
+      targetPort: 50400
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-metadata
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-query-broker-svc
+    namespace: pl
+    resourceVersion: "1734159"
+    uid: 05b71dbd-03f4-40bf-aa51-5fb6c95f6e8e
+  spec:
+    clusterIP: 10.0.228.90
+    clusterIPs:
+    - 10.0.228.90
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 50300
+      protocol: TCP
+      targetPort: 50300
+    - name: tcp-grpc-web
+      port: 50305
+      protocol: TCP
+      targetPort: 50305
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: DaemonSet
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-pem
+    namespace: pl
+    resourceVersion: "1735433"
+    uid: db73e968-9a98-4b25-8127-de8186a0a6a7
+  spec:
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-pem
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-pem
+          plane: data
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_PEM_ENV_VAR_PLACEHOLDER
+            value: "true"
+          - name: PL_PROFILER_JAVA_SYMBOLS
+            value: "true"
+          - name: PL_TABLE_STORE_DATA_LIMIT_MB
+            value: "1228"
+          - name: PX_DEBUG_TLS_SOURCES
+            value: "false"
+          - name: PX_TRACE_STATIC_TLS_BINARIES
+            value: "true"
+          - name: TCMALLOC_SAMPLE_PARAMETER
+            value: "1048576"
+          - name: PL_CLIENT_TLS_CERT
+            value: /certs/client.crt
+          - name: PL_CLIENT_TLS_KEY
+            value: /certs/client.key
+          - name: PL_TLS_CA_CERT
+            value: /certs/ca.crt
+          - name: PL_DISABLE_SSL
+            value: "false"
+          - name: PL_HOST_PATH
+            value: /host
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_VIZIER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_CLOCK_CONVERTER
+            value: default
+          image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          name: pem
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+          securityContext:
+            capabilities:
+              add:
+              - SYS_PTRACE
+              - SYS_ADMIN
+            privileged: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /host
+            name: host-root
+            readOnly: true
+          - mountPath: /sys
+            name: sys
+            readOnly: true
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true
+        hostPID: true
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-query-broker-svc
+          - name: SERVICE_PORT
+            value: "50300"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: qb-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 10
+        volumes:
+        - hostPath:
+            path: /
+            type: Directory
+          name: host-root
+        - hostPath:
+            path: /sys
+            type: Directory
+          name: sys
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+    updateStrategy:
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 20
+      type: RollingUpdate
+  status:
+    currentNumberScheduled: 2
+    desiredNumberScheduled: 2
+    numberAvailable: 2
+    numberMisscheduled: 0
+    numberReady: 2
+    observedGeneration: 1
+    updatedNumberScheduled: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: kelvin
+    namespace: pl
+    resourceVersion: "1735414"
+    uid: 4f718bdf-748d-4060-88f4-6e7627e1c4fb
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: kelvin
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: kelvin
+          plane: data
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_HOST_PATH
+            value: /host
+          - name: PL_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_VIZIER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: TCMALLOC_SAMPLE_PARAMETER
+            value: "1048576"
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          name: app
+          ports:
+          - containerPort: 59300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+          - mountPath: /sys
+            name: sys
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-query-broker-svc
+          - name: SERVICE_PORT
+            value: "50300"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: qb-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - hostPath:
+            path: /sys
+            type: Directory
+          name: sys
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-29T10:08:14Z"
+      lastUpdateTime: "2025-12-29T10:08:14Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-29T10:05:46Z"
+      lastUpdateTime: "2025-12-29T10:08:14Z"
+      message: ReplicaSet "kelvin-7b6fdbfb9f" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-bootstrap: "true"
+      vizier-name: pixie
+    name: vizier-cloud-connector
+    namespace: pl
+    resourceVersion: "1735341"
+    uid: fa3c0e9d-fdd1-45ca-b226-b9517351bc95
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-cloud-connector
+        vizier-bootstrap: "true"
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-cloud-connector
+          plane: control
+          vizier-bootstrap: "true"
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_DEPLOY_KEY
+            valueFrom:
+              secretKeyRef:
+                key: deploy-key
+                name: pl-deploy-secrets
+                optional: true
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_MAX_EXPECTED_CLOCK_SKEW
+            value: "2000"
+          - name: PL_RENEW_PERIOD
+            value: "7500"
+          envFrom:
+          - configMapRef:
+              name: pl-cloud-config
+          - configMapRef:
+              name: pl-cloud-connector-tls-config
+          - configMapRef:
+              name: pl-cluster-config
+              optional: true
+          image: gcr.io/pixie-oss/pixie-prod/vizier-cloud_connector_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50800
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50800
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+            until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq
+            200 ]; do echo "waiting for ${URL}"; sleep 2; done;
+          env:
+          - name: SERVICE_NAME
+            value: pl-nats-mgmt
+          - name: SERVICE_PORT
+            value: "8222"
+          - name: HEALTH_PATH
+          - name: PROTOCOL
+            value: http
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: nats-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: cloud-conn-service-account
+        serviceAccountName: cloud-conn-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-29T10:05:46Z"
+      lastUpdateTime: "2025-12-29T10:06:12Z"
+      message: ReplicaSet "vizier-cloud-connector-df45849cc" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2025-12-29T10:08:08Z"
+      lastUpdateTime: "2025-12-29T10:08:08Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-query-broker
+    namespace: pl
+    resourceVersion: "1735386"
+    uid: 9c73ef45-087f-4a83-ae28-e93f770e8d0c
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-29T10:08:12Z"
+      lastUpdateTime: "2025-12-29T10:08:12Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-29T10:05:46Z"
+      lastUpdateTime: "2025-12-29T10:08:12Z"
+      message: ReplicaSet "vizier-query-broker-765664495f" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: kelvin
+      plane: data
+      pod-template-hash: 7b6fdbfb9f
+      vizier-name: pixie
+    name: kelvin-7b6fdbfb9f
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kelvin
+      uid: 4f718bdf-748d-4060-88f4-6e7627e1c4fb
+    resourceVersion: "1735413"
+    uid: 8c1bf851-41f5-4847-80ec-05dc8b977250
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: kelvin
+        pod-template-hash: 7b6fdbfb9f
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: kelvin
+          plane: data
+          pod-template-hash: 7b6fdbfb9f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_HOST_PATH
+            value: /host
+          - name: PL_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_VIZIER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: TCMALLOC_SAMPLE_PARAMETER
+            value: "1048576"
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          name: app
+          ports:
+          - containerPort: 59300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+          - mountPath: /sys
+            name: sys
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-query-broker-svc
+          - name: SERVICE_PORT
+            value: "50300"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: qb-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - hostPath:
+            path: /sys
+            type: Directory
+          name: sys
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-cloud-connector
+      plane: control
+      pod-template-hash: df45849cc
+      vizier-bootstrap: "true"
+      vizier-name: pixie
+    name: vizier-cloud-connector-df45849cc
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-cloud-connector
+      uid: fa3c0e9d-fdd1-45ca-b226-b9517351bc95
+    resourceVersion: "1735340"
+    uid: aebfee81-b473-418b-9cc3-786550120a32
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-cloud-connector
+        pod-template-hash: df45849cc
+        vizier-bootstrap: "true"
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-cloud-connector
+          plane: control
+          pod-template-hash: df45849cc
+          vizier-bootstrap: "true"
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_DEPLOY_KEY
+            valueFrom:
+              secretKeyRef:
+                key: deploy-key
+                name: pl-deploy-secrets
+                optional: true
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_MAX_EXPECTED_CLOCK_SKEW
+            value: "2000"
+          - name: PL_RENEW_PERIOD
+            value: "7500"
+          envFrom:
+          - configMapRef:
+              name: pl-cloud-config
+          - configMapRef:
+              name: pl-cloud-connector-tls-config
+          - configMapRef:
+              name: pl-cluster-config
+              optional: true
+          image: gcr.io/pixie-oss/pixie-prod/vizier-cloud_connector_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50800
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50800
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+            until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq
+            200 ]; do echo "waiting for ${URL}"; sleep 2; done;
+          env:
+          - name: SERVICE_NAME
+            value: pl-nats-mgmt
+          - name: SERVICE_PORT
+            value: "8222"
+          - name: HEALTH_PATH
+          - name: PROTOCOL
+            value: http
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: nats-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: cloud-conn-service-account
+        serviceAccountName: cloud-conn-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 765664495f
+      vizier-name: pixie
+    name: vizier-query-broker-765664495f
+    namespace: pl
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 9c73ef45-087f-4a83-ae28-e93f770e8d0c
+    resourceVersion: "1735385"
+    uid: 7c8834c4-5642-4daa-9980-e6bd4831e64e
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 765664495f
+    template:
+      metadata:
+        annotations:
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 765664495f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      name: pl-nats
+      vizier-name: pixie
+    name: pl-nats
+    namespace: pl
+    resourceVersion: "1734365"
+    uid: 1771190f-759d-46c8-b089-699c20de7996
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        name: pl-nats
+    serviceName: pl-nats
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          name: pl-nats
+          plane: control
+          vizier-name: pixie
+      spec:
+        containers:
+        - command:
+          - nats-server
+          - --config
+          - /etc/nats-config/nats.conf
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: CLUSTER_ADVERTISE
+            value: $(POD_NAME).pl-nats.$(POD_NAMESPACE).svc
+          image: gcr.io/pixie-oss/pixie-prod/vizier-deps/nats:2.9.19-scratch@sha256:5de59286eb54ead4d4a9279846098d4097b9c17a3c0588182398a7250cde1af9
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - /nats-server -sl=ldm=/var/run/nats/nats.pid && /bin/sleep 60
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8222
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: pl-nats
+          ports:
+          - containerPort: 4222
+            name: client
+            protocol: TCP
+          - containerPort: 7422
+            name: leafnodes
+            protocol: TCP
+          - containerPort: 6222
+            name: cluster
+            protocol: TCP
+          - containerPort: 8222
+            name: monitor
+            protocol: TCP
+          - containerPort: 7777
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8222
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/nats-config
+            name: config-volume
+          - mountPath: /etc/nats-server-tls-certs
+            name: nats-server-tls-volume
+          - mountPath: /var/run/nats
+            name: pid
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        shareProcessNamespace: true
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: nats-server-tls-volume
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: nats-config
+          name: config-volume
+        - emptyDir: {}
+          name: pid
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: pl-nats-5d6d6dff7c
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: pl-nats-5d6d6dff7c
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-metadata
+    namespace: pl
+    resourceVersion: "1734788"
+    uid: f8b4de59-7c5e-4098-9d9f-352eb47013b8
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-metadata
+    serviceName: vizier-metadata
+    template:
+      metadata:
+        annotations:
+          px.dev/metrics_port: "50400"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-metadata
+          plane: control
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_MAX_EXPECTED_CLOCK_SKEW
+            value: "2000"
+          - name: PL_RENEW_PERIOD
+            value: "7500"
+          - name: PL_ETCD_OPERATOR_ENABLED
+            value: "false"
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50400
+              scheme: HTTPS
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 50400
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+          - mountPath: /metadata
+            name: metadata-volume
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+            until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq
+            200 ]; do echo "waiting for ${URL}"; sleep 2; done;
+          env:
+          - name: SERVICE_NAME
+            value: pl-nats-mgmt
+          - name: SERVICE_PORT
+            value: "8222"
+          - name: HEALTH_PATH
+          - name: PROTOCOL
+            value: http
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: nats-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: metadata-service-account
+        serviceAccountName: metadata-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - name: metadata-volume
+          persistentVolumeClaim:
+            claimName: metadata-pv-claim
+    updateStrategy:
+      type: RollingUpdate
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: vizier-metadata-54694b9648
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: vizier-metadata-54694b9648
+    updatedReplicas: 1
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIE6TCCAtGgAwIBAgIRANjIASdOWLDr5cLe9sHObDAwDQYJKoZIhvcNAQELBQAw
+      DTELMAkGA1UEAxMCY2EwIBcNMjUxMjI1MTg1MzA3WhgPMjA1NTEyMjUxOTAzMDda
+      MA0xCzAJBgNVBAMTAmNhMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA
+      zqFJiTcp7nF98f+S2d8DjhNxiu5pca1OZSKnR98sbr62SWJC44ukXV4UJnKODzX9
+      WEXZuT7d9VoqJS+ozUTxw+HHWDvFR+6nXZCchAZW7Xwruy/b97WyvX8G2zncbV+D
+      5omRmj5MV9k/yrEI1pZKOkXN2e0qosAheLWu7FAFz3rzr0D78kf6Dvy+cyDjS3UF
+      wV+gIMb4eb/bU2BwfYSfOdyPbyDNksJBIlD4y+bAwFnj7F2Cf6oZnDCIWkmhCO4Y
+      SxIHgQsTISHW/+8TWbVipNU0dcwMBtR0cLDXiVr9xfy2qUd5eVuFIV71S0Dp23U3
+      n7qBFgEZj5bhZgfx7B5P79cvien6JWh5XyyDGIH9LNZIRyva4vLjjireW6dpdhlY
+      6RnvWBEgbdyfR7DZXWwJTBo+JTShvaRn+fAcyQThs9QkbbB0RCg7oSgCTyeYG0FY
+      5nupLcMoMc3hm4+vKiK5Dl0SEhfuP7cCeDZ6uOsNuzwR2P1tO1VTR+6zKpiaBkMh
+      tuO7gUkwpGI5wRAJb2OJ6aXBhf6iZyFAZqqXFs3XySWw/HJvw+hHRf+rYilLjMql
+      S+ctfsS0QZyKZLhdKpsjXTcMMiOS+3PgGGQnUVvI8eOcCUbQPprpKsnDlefXT4sU
+      pQHRJle+6fSp5MH2KoNbNLqkYXZvgfdzsmQrUYaCcD0CAwEAAaNCMEAwDgYDVR0P
+      AQH/BAQDAgKkMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFHPaXTqKELnri6JY
+      CK4wZUHjcps2MA0GCSqGSIb3DQEBCwUAA4ICAQAEcabxwprY9W5EskXP/CyG3AfG
+      XdknmriAy7HOTqdP8RPvHRKi1BTnhMx7+xWQwVaaU5h+b2fc1ilZJGG2ddlzwxRh
+      A1s0wE4D45hrF50gEPEd2ynFr15k9UIV5tTk7WDpOaSFz84SeddyDGGnAnOZhb5f
+      ZTGVcYhRLIVmfSPbjrzEcy+IUPa+Fyox13zLCLC+kcK7TO/MOoxlo1bpRfBWtLCM
+      RCOsMxFDLwpr+S6zzeW9ZKtS9l+hFhbOH3jcKKvkjpDSwhjaoaWPqheOW/mZu3EM
+      iHtfRfwNLtrzn+4MTeDH6gmRzVUO7lOQcs8sIMwrVqUpz/4x2mktX+CbV4zXPGvL
+      oa/orqXufuKvNFHc5S5d7tKV0JdSVwJNMKG5LNZJYhVOce/FJaqzKOuH8M/YR+rk
+      yuL7H9YKqR17rCIan3zSBhJTIPPxeBrgqZz7j0gagWA1RWRNHUExYXN55sNRxiKU
+      29FQLt1ALT6OMHbnbtmMrRH5vrh+WhwE6HT9wfcLUJqJX7s/t4+kol3Oni8QCw1Y
+      mAvOjsyttlnzI1eh7Qo4c6tmdaRXn9gN9wOfHkBONYDWYT3eGUeYPXsuP94VSOAI
+      MyGcg/9qJDdQBf7rrefI/0doTLCivkyN00+/+6Uw3/Hp04j1wA+7V7xnUTpKCdrv
+      y4BESdZ44T2cNIrPmg==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2025-12-29T09:55:07Z"
+    name: kube-root-ca.crt
+    namespace: pl
+    resourceVersion: "1728911"
+    uid: f15d0ebd-d4a5-44a7-b942-590e43b5c976
+- apiVersion: v1
+  data:
+    nats.conf: |
+      pid_file: "/var/run/nats/nats.pid"
+      http: 8222
+
+      tls {
+        ca_file: "/etc/nats-server-tls-certs/ca.crt",
+        cert_file: "/etc/nats-server-tls-certs/server.crt",
+        key_file: "/etc/nats-server-tls-certs/server.key",
+        timeout: 3
+        verify: true
+      }
+  kind: ConfigMap
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      vizier-name: pixie
+    name: nats-config
+    namespace: pl
+    resourceVersion: "1734092"
+    uid: b68cb8db-4e4a-4603-980d-b6fb34650b7c
+- apiVersion: v1
+  data:
+    PL_CLOUD_ADDR: getcosmic.ai:443
+    PL_CLUSTER_NAME: k8s-aks
+    PL_UPDATE_CLOUD_ADDR: getcosmic.ai:443
+  kind: ConfigMap
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:41Z"
+    labels:
+      vizier-name: pixie
+    name: pl-cloud-config
+    namespace: pl
+    resourceVersion: "1734052"
+    uid: da398364-2d11-4bd6-95c4-2e27812bb70c
+- apiVersion: v1
+  data:
+    PL_CLIENT_TLS_CERT: /certs/client.crt
+    PL_CLIENT_TLS_KEY: /certs/client.key
+    PL_SERVER_TLS_CERT: /certs/server.crt
+    PL_SERVER_TLS_KEY: /certs/server.key
+    PL_TLS_CA_CERT: /certs/ca.crt
+  kind: ConfigMap
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-bootstrap: "true"
+      vizier-name: pixie
+    name: pl-cloud-connector-tls-config
+    namespace: pl
+    resourceVersion: "1734141"
+    uid: b9b65b4c-d040-4b4f-9d32-02d1dd8a147d
+- apiVersion: v1
+  data:
+    PL_CUSTOM_ANNOTATIONS: ""
+    PL_CUSTOM_LABELS: ""
+    PL_DISABLE_AUTO_UPDATE: "false"
+    PL_ETCD_OPERATOR_ENABLED: "false"
+    PL_MD_ETCD_SERVER: https://pl-etcd-client.pl.svc:2379
+    PX_MEMORY_LIMIT: ""
+    PX_MEMORY_REQUEST: ""
+  kind: ConfigMap
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:41Z"
+    labels:
+      vizier-name: pixie
+    name: pl-cluster-config
+    namespace: pl
+    resourceVersion: "1734053"
+    uid: c6c3bae7-42a4-47f3-ab55-3c37e7a1f9bd
+- apiVersion: v1
+  data:
+    PL_CLIENT_TLS_CERT: /certs/client.crt
+    PL_CLIENT_TLS_KEY: /certs/client.key
+    PL_SERVER_TLS_CERT: /certs/server.crt
+    PL_SERVER_TLS_KEY: /certs/server.key
+    PL_TLS_CA_CERT: /certs/ca.crt
+  kind: ConfigMap
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: pl-tls-config
+    namespace: pl
+    resourceVersion: "1734142"
+    uid: c40e9a5b-9d9a-4f88-a902-f2e9a6d452ae
+- apiVersion: v1
+  data:
+    etcd-client-ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZoVENDQTIyZ0F3SUJBZ0lDQm5Vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFOREZhRncwek1ERXlNamt4Ck1EQTFOREZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUUM0ak1EQ0F2Z0tzbmpmTEZiM3J6aEdqMmdqCjZYTFRSRjQ2b3c5U0dxN2o3SytyREd2RTRNVTNueFBKeEJEY2NObnUrOXlmWXpkVVJSQUR0QmE5eHBaOU5JY0EKc0NNdVVUR0NONkdwYU91QUZscEpHNXFtQ0lIOTVxVlJCZlNTQ0xVZG9nS0FXdUFJdEJRWTJiUERUM2JSd2hnSQp3N2pBRmFhUjBCT0d2VzVwVkliTTFBRzcxczdYdklRK1pXdjROejFwSW0zYUlGaGdlVGo5RVpHOGdFVzUxVHVLCmlRQThSSkxWQlF2V01IMjZzVXFxZHBHRUsweTVEVFBVTUZYdjJEMkMxcWV2bEhKVUxlaFFUUDZZT3VHSkExYUgKclIrMmh2RjlqNTI0N0NseVNXZGNEaWpEeGhjeEZEd2kvUy9palQ0SGptY2FEYVdmajd5SFF5SVVLSE42ZStqOQpUa0R4ZjlhR2JSQ2ZpellKZ01PZnNVRWR3VmNQSlA5NEtrUFVPeGZJT3YyWGNvZ0dOd1pTR1pTdTUxbGFGSkJOCnhQNS92S0FmbVpwSXhJdVJaTXFEaGxhenVJUFV6T1Y0eVNGWVlBWGNmSFJPeWQ1Z3ZpTVZoc0dTeENhNnlrMWoKMU5oOTFnQ01Wdy9zdFFqWXcrdjBEajk2emNXcXVLMWxaV2dWSElFTU43WEs5T3NRcmhXYldHdjNHUzB2alNQQgpWNEpxeWNQZkduMEIyVGRYOHZDbHIvR0tBZnkzRERZWjl0WGxXRU0rcHBjUFBNQ0x5WkpuV3NqRDZ5b2hhTjJnClBmSExEcWZ6RjZVWW9OMzczZmQ1SDkrM1ZVMnhSZkRkcE8xZG11ZnJ5amZBOStUdkRKSTRCblBERm5RczRBK3gKMCtqU2xaN1dRL2VBZGNtOWFRSURBUUFCbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQXFRd0hRWURWUjBsQkJZdwpGQVlJS3dZQkJRVUhBd0lHQ0NzR0FRVUZCd01CTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFCkZJYTBkNFRrZENhSmcyVG8xb3dpVS8wK2huK0FNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUFOZDJVOFd0eWcKOGozTkxIdGIvRDdyZkxtWTFLci9Qdk5vM1oyY044dXNXR09jdlFOUlVBblA0TDdpcVVjRllBMHdnWUo0ZVM4VgpKWlg3RVcyZktVM0NrUGE2MFVjZS93SVR6YTd0c2Q1RE5KQXZpSVNTcUZVclYxakt3TTRERmNUdnRwcUlHM3lCClNSRG5qU1krcllUZS96b2dzSHRCRkx6ZUdwNytrQU83RmZCQXhxZDBhRngxamhsY3FFYis4WDVYVWZBamFyMjIKL2hDZ0JEWldGcm1ybWJCd3QySXYvdmJwTE9hMEY4ckhETjlnNkJqb2xTRVI5ZkdGVFlsc2ZUSk4ralNCVi84agpKQjlDbE8ycnBIVDhQY2NlT3NJaWJ1SkpWemIyREJzS0h3RThNK25HSUoxSWx5UDMzWTlta2ROeGJTUjkvNDB6CjNZcXEzQjROVnoxSjZUbDZ1OWJsNU0vNXlZMXZ1R1kxRlJTeXY2RXBacEpEbEpNY2wxZ3RuRzB3VHFRUzVOaUcKR21NWC9CTE1aUVhNcDJFcWNkdlRPMXRkZHoxUzlrZXIxemJKZTdCV1lsNHJNaTJRcFNsODN2SXd1RlM1VTE4RwpTc2ZCTWgyUk5oZlRYcXI0dituM3crNkNhT2p1Q0c3NlFzOExpY0N6L2ZKVlIzZmNyVW1RUGx6Vy9aZ003ODUrCjdQL2xIWlVsKytJUkt4WTdMeVJ1WWloaVlaTjRIRitCYnM5UnRVQ3IwTXBmaU9ObXlBK2hHTXI3VlhHbVpySE4KOVJ2akZuR2dKTGNEL3JEQjcxVzM1b0VvSzhJZHFqeXlQTVRabis3Q0p5alRZcE9SZkZzZG9ZVUw4K1lUVUU5TAoxNE93RWhiRVhnWWVEWHBEWVdNdXhNYzlvWlN6ZU1IbU1RPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    etcd-client.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUYvRENDQStTZ0F3SUJBZ0lDQm5vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFOREphRncwek1ERXlNamt4Ck1EQTFOREphTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUUM0MmNISTZLWFd3UVdyRHMwV2lyS1ROTzZrCkRzT2UwaDRyT0FjVHhCS3NZbFVOUjA3akVtT3F2ZjB2ZFVFZXhiZjQxS2dsY2liYUxYbXBjQ29wbHo5VFEyYWsKTWZUajk0ZkZxMTRFdGd2bEMzcE1mTDM0a0dwOHFvdmx0emlkaG1zTysyK0pmeFVEcTdqSzJ6R0xOV0NickhqLwpKT2ptRmdrS2xyS2daZjZBQUVKTnJKZWFsN1dRZkMyTUttODNEMWtEYXd6MlhpOW1DVUZna09ERGFtQjhVeWlSCmZydDRCclJMWTE3RHQwOTd0eDVLbFJ5QmNqTzJvZWZBQXF1c2VSMzFFT3loa2owalk1K082K1h2UkR2WXh2OGoKN2pCM05ZK1Y2Y3A4c2RhSGE1VTNvNHl4TUIzYXhySDZReVFuZWhDcnJqaEtiRlBxOFlrTUtjOU5XaEZ2cVh3WAplTlFuS3J3a3RiT0t0Y1V1cE1WWmFjSFE3MXd4enl1VHJNU29tV3ZRNk41T2dmZDJiMEhCcGpyKy9aUEZiOE5JCkhaemZJRnRwRlNKNXQwYU4rRXRFOXVoR1RKZXpjcUZ2Z3dxckdWdnZ5YkFyZ1hiTUhUaWJtc3kveUlPNzFSTnUKYjQrNVg0RHI1K283R1ZzdHRLcDZ0VnFLdU1rNGpqT0JBTVZsU0JNOTl4Vm1uTWxHMXg0eUEyek1XanExWXpIQwppWXFpQWlOeklranRpMzhkSWxXQnpDeUhHaXV4VXdCcEV0Vmk0bStqK0QxN0h5akM3ZjB2blJtd0lqS2tGdUJZCktXbkN4REF0TzFCczhYbEdvYnBNSllGbUJsMnM5MmRjY0dlV3V0WFRUMjNzeTRCRmtVVUM5d2lseklBS3BNOVQKb29iRGs0U0JOOFc2enJac25RSURBUUFCbzRIWE1JSFVNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdFd0RBWURWUjBUQVFIL0JBSXdBRENCbEFZRFZSMFJCSUdNCk1JR0pnZ2dxTG5Cc0xuTjJZNElXS2k1d2JDNXpkbU11WTJ4MWMzUmxjaTVzYjJOaGJJSVdLaTV3YkM1d2IyUXUKWTJ4MWMzUmxjaTVzYjJOaGJJSVFLaTV3YkMxbGRHTmtMbkJzTG5OMlk0SWVLaTV3YkMxbGRHTmtMbkJzTG5OMgpZeTVqYkhWemRHVnlMbXh2WTJGc2dnZHdiQzF1WVhSemdnZHdiQzFsZEdOa2dnbHNiMk5oYkdodmMzUXdEUVlKCktvWklodmNOQVFFTEJRQURnZ0lCQUZyb1pzVW42YkhzWkNaUkNZVHFrOU5lRzNrOEl0U1V0U3RIUCtDd2pCS0QKMWpYVWV4OUYxT09YQUdtRkFaaExhN1FXVnpkWWczYkNFdVg2U3I0Z2UxbFAxWFBDaWptWC96bThoYlhKdkdFSQowYkpHY01yUk1lN1MrMVJ2cTd5TmhjVjAxYTNodC9rWHhTbjVMZ1EzSGlwbmNtV3U0QUVQWVR6SGczQlM0ZVBoClRqRzVrNG9vYXpFcjdVbFZ3OTdRckFwRkNnTkFIbHQ5M2pWMS9JeG5ETzBOYWtmOHlXdGtsa0Zrd2tmUTVqenEKY1JZTnh2Q0JMQTA0V2RWSzNaOUI4YkUvWlA4UHlkbmZ3R3VUTVJXbW1uYjVpUG9raXdsalEvM29KS2Qwcjl2YwpIV0cwcjNGSjdoYndVcy96dXBvSy83cnRXRzlsU1pMS3h2RHA3TVczOCswbVdrQVc1bTZjK1lyWGUxRy82T0p0CndRQXF2RnJmL3pDUDZjajNHc1VObU4zZE8vR2p5VEVQeXFIVjBRVkY0dTVHNGs3MkVSNUtRblYyRS9Ua1NESWoKMFlVa2RyYUIxeVJNbFFZYmVzQTNYYkJqWGl0N08wSHBLK0FzaVZQV0d5OVFDcXlIZ0J4MjFTNDNVMVR2dUs5RwpXUllNSFNaemJKbTNrTW9oekJOdS80Y2VaSXFsL2VLekliNEdMQndUaXQ5Y3hrRWlqcXdoSmdMZzY2cUhEajk1CldiV25EOU1PR3pJMFEvZHFLT29EYU5wcldRM1dZV2d1dDFiWEovcENOYjdTK0NOUUVobEM3YXdVVEJBUnh2cWsKQ0MvZENKb1M1TDF1Yjh5TUFUeUhqTHR3SFhkZ0xDTjNuK1BCZHhZb296bzczblJrMXNGYjQxS1czNXA3ei9iRQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    etcd-client.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKSndJQkFBS0NBZ0VBdU5uQnlPaWwxc0VGcXc3TkZvcXlrelR1cEE3RG50SWVLemdIRThRU3JHSlZEVWRPCjR4SmpxcjM5TDNWQkhzVzMrTlNvSlhJbTJpMTVxWEFxS1pjL1UwTm1wREgwNC9lSHhhdGVCTFlMNVF0NlRIeTkKK0pCcWZLcUw1YmM0bllackR2dHZpWDhWQTZ1NHl0c3hpelZnbTZ4NC95VG81aFlKQ3BheW9HWCtnQUJDVGF5WAptcGUxa0h3dGpDcHZOdzlaQTJzTTlsNHZaZ2xCWUpEZ3cycGdmRk1va1g2N2VBYTBTMk5ldzdkUGU3Y2VTcFVjCmdYSXp0cUhud0FLcnJIa2Q5UkRzb1pJOUkyT2ZqdXZsNzBRNzJNYi9JKzR3ZHpXUGxlbktmTEhXaDJ1Vk42T00Kc1RBZDJzYXgra01rSjNvUXE2NDRTbXhUNnZHSkRDblBUVm9SYjZsOEYzalVKeXE4SkxXemlyWEZMcVRGV1duQgowTzljTWM4cms2ekVxSmxyME9qZVRvSDNkbTlCd2FZNi92MlR4Vy9EU0IyYzN5QmJhUlVpZWJkR2pmaExSUGJvClJreVhzM0toYjRNS3F4bGI3OG13SzRGMnpCMDRtNXJNdjhpRHU5VVRibStQdVYrQTYrZnFPeGxiTGJTcWVyVmEKaXJqSk9JNHpnUURGWlVnVFBmY1ZacHpKUnRjZU1nTnN6Rm82dFdNeHdvbUtvZ0lqY3lKSTdZdC9IU0pWZ2N3cwpoeG9yc1ZNQWFSTFZZdUp2by9nOWV4OG93dTM5TDUwWnNDSXlwQmJnV0NscHdzUXdMVHRRYlBGNVJxRzZUQ1dCClpnWmRyUGRuWEhCbmxyclYwMDl0N011QVJaRkZBdmNJcGN5QUNxVFBVNktHdzVPRWdUZkZ1czYyYkowQ0F3RUEKQVFLQ0FnQXd5dkgyNlVvVkpNQXRSZXZtdmxlaXViOGdPUEZ6ODd5WTVlSWdXb29mVEpsc3R0emczVkxIbC96RAowU3lPUmR4bzV5RTNPU2wrUDdDMGcvSHRKb3BGblMzenUyZ0w0S1BMRG8venFHWDlZSWs0dFZpanl1TUE0emVvClBEUEtpTmVyamIwRVN6SXQxTjhqVkxhQUsyZkR6OFBrZlVhb3JUcFh2QzJNWHovTlk4UWNvcWtsMmxQSHZxOTcKSnh4U0tVL3lzZ2dxNC9PWStHcDBaZW1lUzI4S2doemNRdHFUTlJuVUtIZTBLNmZrWFJLMjF5TStHL29BaEQ0YgpGZGxnM2x1RSs2R3FpR0p3Ky9QN0V0T1AwN0FFYVlxaFhsY1dzR0dsVFovd1NEVDdhKzlvVDFoczBPbWdmUUF2CnNoZFNBRXQwTmJtUUU0WVhKd2hvMklScXc1S0VOeGxCaDlWOHBHcVRQNHJCbnN3R2krZTgxZWNlOERPakJCSloKSC9obGsrdndTcVZ1V3Y4M0Y0bVFrNy9BeFZPU0o5aUtCaW9rbmRhYThsaGcrTEtWbmVtV2hjQ0FHbkVSbnNuZApsbXo4bURRbDh3d3FYSUJIRFpnWGxydkpyRkMvMFVyTW9VSklIWVQrdXNibGtVbC9OM21YOWUzMEFDM2VZa1UzClFRcjJweVp2dHp5ZXJoR3h6UzNOY3BVUmNsc0xvckVaNG5MSVpNQmYwZXVheTVlV3FNL2tkNG05dUFsempNcHQKVkI1VU4yTnh2WitISzh4N0lYem1LMCtpc3VvUUZ6Snl2YitjYVBNNTRwZEV1aWl3MFRuSUREZXZscFJ4aVNUTQo0SVd3ZmtjcDhObnQxZUJFMlNRNy9jOWQ5RjRwckZ3WnpUdkJWeTVrdHBWc0JLOHh0UUtDQVFFQTNYaUJLYSs5ClRtMXBZYnlZVHVZRXViY0tDZm9NN0FMMWpSL29CRmdqa0hscWU2MVZJajM4R2JyVHJ2VEwyTmFHRTNXUUtJeDgKMm4xSm5nL2xiaVNFbUp0Tm9ObHdYUUtaNVFidXV1QUU3WmdRcHdzV1lFNUdFSUtZL0xrN0xFem55UVRQSnpWNwpvc2xRbTBTM0hlSGVYK1dKRkxKZmVnM1lKaUJPNHV5d1E0R2JITkY4cTNRU2pOMnhOM0FMRjEzc0JxV3V5MCtuCkx0NlJON2lwSWRWc2FPbWdBZi9UazJzR3dvdEM3VDFpV0JvU2I3NCtRcnJObFg5QzFmay83QWwvN2lmYlhWNXIKTUVadWovM3VIeGoyVE56VTdZT2pqSnBUbWpjR0ZVRElJYm9uRGh1dC9ObkRMb012VGdFRFBMK0QybmNKTHZseQp2bllhTENqRWVXNFlrd0tDQVFFQTFhdWxGM0MxTDhTaS8xaTBJdHprL05NaWI3QjlhMVJWZHRkbU1GYysvUjE5CmhMWFYzYXFlYXFaUXlUT1RWVGJYQ2hvcGtmRGR3SkxyZmszakdnR1VLWFprdFFqZnY0ZHN6OVdwZlFhaEVBbFYKYnBiYTV2WUNERzE2MStzTmdvL2lUQ2ZBVTdDQzJXeThzLzJFZEFITjM3YzBVUjJ6TW9LaGNhOW14QmNTbWlhMworWmErRlowQ09udUtQMVdYRkQxZ2RXSU9OeEMvUU5OODByTzJ4ZUcyd1pVQXhZS1BBY0Z0VnRGUUJNYVJjNjdGCnJxaVN0NlUvTFJLUkNkNzc5ZnVpdWljYmhmZk9RUGo5WDVTK1o2RE9Zd0R2Q3VPa28wbU9LOXc4cFc2UW4weUkKei9zczQ1cUd6ZkVYWkg0U1BEb3pGUVdNdm5CdmI4T2doZk5nZDNxVUR3S0NBUUFobXA4K2pBUFZXcFNhMTlyawpYZEpwdTNReWYxWm1tU3hZOVhabThsaXpHemtrK3UvbitpKytWN0syNFQzczhOLzNJK2R6djUxU0thQjU4eitFCnJ0WFBzZ0RkWHlERmZCZU53TGVJYzJWTUI3Ni9HZGVUVlUwY1JEU2laQml1YUJ6alMyK0RLNEpPK096YUlsc0cKbGJjQUpmdmV3QkhzbXgwbzY4NE1jSTF1TU1Rd1l6amZhd1ZGaW4zUlE1YnJQTDBMWlNoWWdRV0UveEJadkJNdApwd3lEL3E3Z25zaWpuYUd3OHlCOGpzdlZRbDk1eFF2OVpBcTluRW12M2RudEhxUGlwdm1KK1VHYVdaVjlFN0tGCjFXdkp6ZGdoRWRCSERVT1NLcmNwa21MTGUwdGh3S0Z0dEQwQldiWmJ4NXVPSkNFRmpQby92bW5DckhqY0tuTmwKV1djeEFvSUJBQWpUWFM5WnJYSTZxZ3pvQ2hEQ2xRYklaY3k5T29EN2E4aEwzMkd4eU4xRm9aQ2d2aU80ejNCUwpURlh6Tm11M3B5dzRwbXpyeVEwU1JIM2tFN1JZU2xsb0ZZTFF5Z1VzUDlkWjJQVmNGNzBFMWEyS3Q2SUFtVmNRCkVwbm1rSmxLL2lydEhXbVhpZUFYT0xncWlaVU5HZ2JhbDJPZVdXK0ZxOHQ1VmtKVlBhUjJZdlVCUC9xK2tILy8KNkZielh4a3I2OWNOWk03cmR5cmpVVzJXbEw4WnNxWE9WTWpUdXJwMDFlSlhKUG45aGJhRWlvL0xVTHdiTEQvZApXM1pQNnBKZmdYbzA4Vk1ZU0VHd3h5NXlnMmJlWW9mK1d1RlZROUNtMGlPSHBrMmpBb0JCOWdpNU5FSjJlSWo3CkkxODRRZUtRK05rdWNJRFJQaGtjdUgydjd0VWdrQXNDZ2dFQWJwQ2hiTVpoUWIrRDBpOSt6S2xuSXFLdG9LSlQKeTROYnJYbEpXUk9RdkRSWU9GUXZNdHlCVitjRjl6OFFWZlhUcXA5bWVkQllXT0hFOTJiazY3MHUzc0IvaEVJbgpCNU90Y0tzbFZrRmYzcEo5TWI2elduOFBqR1lFTndNaUNVVXNCYklxYmZpd1N0TUNHV013Wk5FZnFpV05BeENUCjFlZnI0YkpZUWwzQkV4RTRzUTFsWHF1THdTUUVRZEtPc3RTK2E2K3Y4TjhMVmw2bnJtUUdja211YVdGTXYxdlcKN0ppQ2QxajdXOGdiUlEvRDFHNkVjWk1zeW03NjZFZ0JhVkFnbjcrVFNIMlBObGpTVFBTR3RvRTNkbU0vcjlRNwpHMjdLRjJjSXFBNW01WDdDVTNGY0o2ODM0cnRpejR0YTRLalpwZGVidTFZMjU1dXZxV2Y1bzN6ZTdnPT0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      vizier-name: pixie
+    name: etcd-client-tls-certs
+    namespace: pl
+    resourceVersion: "1734090"
+    uid: 01cc151a-8a1c-4b7a-92ce-644fe4b13ec6
+  type: Opaque
+- apiVersion: v1
+  data:
+    peer-ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZoVENDQTIyZ0F3SUJBZ0lDQm5Vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFOREZhRncwek1ERXlNamt4Ck1EQTFOREZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUUM0ak1EQ0F2Z0tzbmpmTEZiM3J6aEdqMmdqCjZYTFRSRjQ2b3c5U0dxN2o3SytyREd2RTRNVTNueFBKeEJEY2NObnUrOXlmWXpkVVJSQUR0QmE5eHBaOU5JY0EKc0NNdVVUR0NONkdwYU91QUZscEpHNXFtQ0lIOTVxVlJCZlNTQ0xVZG9nS0FXdUFJdEJRWTJiUERUM2JSd2hnSQp3N2pBRmFhUjBCT0d2VzVwVkliTTFBRzcxczdYdklRK1pXdjROejFwSW0zYUlGaGdlVGo5RVpHOGdFVzUxVHVLCmlRQThSSkxWQlF2V01IMjZzVXFxZHBHRUsweTVEVFBVTUZYdjJEMkMxcWV2bEhKVUxlaFFUUDZZT3VHSkExYUgKclIrMmh2RjlqNTI0N0NseVNXZGNEaWpEeGhjeEZEd2kvUy9palQ0SGptY2FEYVdmajd5SFF5SVVLSE42ZStqOQpUa0R4ZjlhR2JSQ2ZpellKZ01PZnNVRWR3VmNQSlA5NEtrUFVPeGZJT3YyWGNvZ0dOd1pTR1pTdTUxbGFGSkJOCnhQNS92S0FmbVpwSXhJdVJaTXFEaGxhenVJUFV6T1Y0eVNGWVlBWGNmSFJPeWQ1Z3ZpTVZoc0dTeENhNnlrMWoKMU5oOTFnQ01Wdy9zdFFqWXcrdjBEajk2emNXcXVLMWxaV2dWSElFTU43WEs5T3NRcmhXYldHdjNHUzB2alNQQgpWNEpxeWNQZkduMEIyVGRYOHZDbHIvR0tBZnkzRERZWjl0WGxXRU0rcHBjUFBNQ0x5WkpuV3NqRDZ5b2hhTjJnClBmSExEcWZ6RjZVWW9OMzczZmQ1SDkrM1ZVMnhSZkRkcE8xZG11ZnJ5amZBOStUdkRKSTRCblBERm5RczRBK3gKMCtqU2xaN1dRL2VBZGNtOWFRSURBUUFCbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQXFRd0hRWURWUjBsQkJZdwpGQVlJS3dZQkJRVUhBd0lHQ0NzR0FRVUZCd01CTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFCkZJYTBkNFRrZENhSmcyVG8xb3dpVS8wK2huK0FNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUFOZDJVOFd0eWcKOGozTkxIdGIvRDdyZkxtWTFLci9Qdk5vM1oyY044dXNXR09jdlFOUlVBblA0TDdpcVVjRllBMHdnWUo0ZVM4VgpKWlg3RVcyZktVM0NrUGE2MFVjZS93SVR6YTd0c2Q1RE5KQXZpSVNTcUZVclYxakt3TTRERmNUdnRwcUlHM3lCClNSRG5qU1krcllUZS96b2dzSHRCRkx6ZUdwNytrQU83RmZCQXhxZDBhRngxamhsY3FFYis4WDVYVWZBamFyMjIKL2hDZ0JEWldGcm1ybWJCd3QySXYvdmJwTE9hMEY4ckhETjlnNkJqb2xTRVI5ZkdGVFlsc2ZUSk4ralNCVi84agpKQjlDbE8ycnBIVDhQY2NlT3NJaWJ1SkpWemIyREJzS0h3RThNK25HSUoxSWx5UDMzWTlta2ROeGJTUjkvNDB6CjNZcXEzQjROVnoxSjZUbDZ1OWJsNU0vNXlZMXZ1R1kxRlJTeXY2RXBacEpEbEpNY2wxZ3RuRzB3VHFRUzVOaUcKR21NWC9CTE1aUVhNcDJFcWNkdlRPMXRkZHoxUzlrZXIxemJKZTdCV1lsNHJNaTJRcFNsODN2SXd1RlM1VTE4RwpTc2ZCTWgyUk5oZlRYcXI0dituM3crNkNhT2p1Q0c3NlFzOExpY0N6L2ZKVlIzZmNyVW1RUGx6Vy9aZ003ODUrCjdQL2xIWlVsKytJUkt4WTdMeVJ1WWloaVlaTjRIRitCYnM5UnRVQ3IwTXBmaU9ObXlBK2hHTXI3VlhHbVpySE4KOVJ2akZuR2dKTGNEL3JEQjcxVzM1b0VvSzhJZHFqeXlQTVRabis3Q0p5alRZcE9SZkZzZG9ZVUw4K1lUVUU5TAoxNE93RWhiRVhnWWVEWHBEWVdNdXhNYzlvWlN6ZU1IbU1RPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    peer.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUYvRENDQStTZ0F3SUJBZ0lDQm5vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFORFZhRncwek1ERXlNamt4Ck1EQTFORFZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURPMU4wRmF2SURabDIzUlF4THhsREJrSWlRCldRTXJtVkUyRHkyKzBYNUtJNDV6NS9qZ1JUdkxURFpOY2NscUxEdWR4ejF3TGh6blVJVHExdWJ6aU94T1NoZXMKaW9PeTM4Q2hTR1B3a2Y2aUt3dDFzNy9XK0JZTFA5TnpOQXNXT2lnNVJZVHhHZmFWclBsOTE5blZmRjcvemVreApTcTFGaVhPWktDRXBGQlQ1RHFlS1QyWkErVy9ZZVJSYlh4U0lCRGQwYUJ2RGlLM1NWbmFMTUptY1RRQk1HbWdsCmEzSUJmYXFpL3dzNTJkZ1pwbzFrajU5RmtVdHJQM0Z4VWt0c3RHekZDYlRJenozL005RGVXclNhMFp6emtESUMKMmtaSzk2WjdqczVia2tkWDdXbDNSdjBEVWc5VzJ3NkJLK3lsWW1MUElLZGRaVng3dGExWTNkalpSMkhiL2lMcwp2NFozWWZhNW40ZnhxaDgwdEhTcE41ZXFpV1Mwd1hCdnR2Z0pyWFlDbmhFdW5WUGZBZ1U4NUN4YXlHZzVKcUtwCkJISUNRNUtJMVN5NEVaSFFBL1BpQ0VFZmxBV3RwblhzRXNvSjZPNmlDYklHaS9vTGNMTDN6Q2E5dzdKNmR3MUEKOHZqTVd3a2ppZE1aWWdrWnM0Z3FXbUplS2U2S3A0NmU0c2w1Wm9selkzaGdYM2ZRbThlb1cxRHNGMmlJS3ArKwpxWk9yWVVmc01wR2tDYUVvd3hHc1o0ZEhhNERvUlRUcmpFMmhNT2FGSlAwVFpBMVRPRzEvV1BaUkV4TTk5Z0tPCllkeE9BQVFPbzRvYlE2YzR4aTgwMlNrLzlra1hwa0k5cXBIcTVYd2I4YUtmcWRHN1d1N1hQMlhRdjJNYThZVloKVTVhanRPbWtNV05xNVVDMVdRSURBUUFCbzRIWE1JSFVNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdFd0RBWURWUjBUQVFIL0JBSXdBRENCbEFZRFZSMFJCSUdNCk1JR0pnZ2dxTG5Cc0xuTjJZNElXS2k1d2JDNXpkbU11WTJ4MWMzUmxjaTVzYjJOaGJJSVdLaTV3YkM1d2IyUXUKWTJ4MWMzUmxjaTVzYjJOaGJJSVFLaTV3YkMxbGRHTmtMbkJzTG5OMlk0SWVLaTV3YkMxbGRHTmtMbkJzTG5OMgpZeTVqYkhWemRHVnlMbXh2WTJGc2dnZHdiQzF1WVhSemdnZHdiQzFsZEdOa2dnbHNiMk5oYkdodmMzUXdEUVlKCktvWklodmNOQVFFTEJRQURnZ0lCQUpWRXIvK21Xejhva0VPKzdaVWJOdHpGd29pSDR5M0Fqd0tSY25sMll3TnkKNnR2K0NQVWlUYzZ2bTRqeXBkOFZQbXlkNlBUdDdiemFMdDRtSEd5VjdSVllPT1hnVExYZkdpZHN3aWx5enJpVApxcks5RFBBNVFwNG8vYkFFRDRMTS9ZVlZvZExvN3IwR0FGVW0rN1I0Q3BEQ2QzRm9FYk5nTEVFbFRlRlZoK2s1CnpHZ3V0TGpRZkhkcEdpUXV2cWtYWWYwazNSano1SGpyeXZ6STB2TTkxQW5HQkZvb1FHWWZ3MktHRTNVdFQvSVAKTGZLSmEwbzZhZlMxM0llclpsSFpCMkU1WDNsdk9LYm8vSWVtZnVvTGVjQUdPOC9GQ1Z4amd5SW1acEduVlZTZQpCUnlJNGllbEIrai9BOTNHaVNBNGRaM1YvUWVObXExYkx2THRlZjAwSU45aUw0RU5ZZ2RJekhtTDZ2aTZUTWR3Ck9zcTJJZVBrVkYvRTNGczlFa2hQQVNzMkZVdUFqcFNPbDV2MDJOdjJQVTRMN01zSXEzL1dlZElKeEYyYWptNEEKN2U0MjQrM1QybGFuN0J4MGN0bjBaM0tOZUhmdnY5ZVpNZlBhbkplb1UrVUJha3JPTVp1OWZlSnpvc1E5bk1lNwp3NFY3ZlBTSncyZEtSdW5zTHJKa2w1VEZ0NUxLaGNFTjM2bFp1eVhkRXk3a3FUYUcvYzFDSnNpMXU5cmVjY3lmCkoxa0c5dTBKd1hEbW9tNzRHWk1mQVdFL0trT2QwYldKanY1RXJzUEdOSExUZmdOTlJzRjE1YTRrbVZCWWtwdUgKR1lYLzh0cmtFQ3dVN0tMMEJaeXdUeDNxM0kyVlF0TWxtZFBUdkwvcjZ5WFd0NW9uOWs2RExtdUd0NnlJQlJNYQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    peer.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKS0FJQkFBS0NBZ0VBenRUZEJXcnlBMlpkdDBVTVM4WlF3WkNJa0ZrREs1bFJOZzh0dnRGK1NpT09jK2Y0CjRFVTd5MHcyVFhISmFpdzduY2M5Y0M0YzUxQ0U2dGJtODRqc1Rrb1hySXFEc3QvQW9VaGo4Skgrb2lzTGRiTy8KMXZnV0N6L1RjelFMRmpvb09VV0U4Um4ybGF6NWZkZloxWHhlLzgzcE1VcXRSWWx6bVNnaEtSUVUrUTZuaWs5bQpRUGx2MkhrVVcxOFVpQVEzZEdnYnc0aXQwbFoyaXpDWm5FMEFUQnBvSld0eUFYMnFvdjhMT2RuWUdhYU5aSStmClJaRkxhejl4Y1ZKTGJMUnN4UW0weU04OS96UFEzbHEwbXRHYzg1QXlBdHBHU3ZlbWU0N09XNUpIVisxcGQwYjkKQTFJUFZ0c09nU3ZzcFdKaXp5Q25YV1ZjZTdXdFdOM1kyVWRoMi80aTdMK0dkMkgydVorSDhhb2ZOTFIwcVRlWApxb2xrdE1Gd2I3YjRDYTEyQXA0UkxwMVQzd0lGUE9Rc1dzaG9PU2FpcVFSeUFrT1NpTlVzdUJHUjBBUHo0Z2hCCkg1UUZyYVoxN0JMS0NlanVvZ215Qm92NkMzQ3k5OHdtdmNPeWVuY05RUEw0ekZzSkk0blRHV0lKR2JPSUtscGkKWGludWlxZU9udUxKZVdhSmMyTjRZRjkzMEp2SHFGdFE3QmRvaUNxZnZxbVRxMkZIN0RLUnBBbWhLTU1SckdlSApSMnVBNkVVMDY0eE5vVERtaFNUOUUyUU5Vemh0ZjFqMlVSTVRQZllDam1IY1RnQUVEcU9LRzBPbk9NWXZOTmtwClAvWkpGNlpDUGFxUjZ1VjhHL0dpbjZuUnUxcnUxejlsMEw5akd2R0ZXVk9XbzdUcHBERmphdVZBdFZrQ0F3RUEKQVFLQ0FnQm5lODFSNXA1TDRTM0dnbitTY2hqNW4rMFQrOVZBUFNlSzJyRlNwZEtBR2FZdWk4UFR3aEFXdVh6NQo1cEtWMHFmSlcyUjcralp2N2JOekpDN05icFo4M1VsWEJMNjhBb09Jcm9XQ1dpbUN6ZktmNDExNm13bThleVM2Cm9URmkzNW84ZlhIMGg3NytTRnRVQVdsMkRSSWkvczFMNGtjcllZZzYrdjhNWklYUnp1azRwRjFPNlA1eTJyRzYKdmFteUhCbjYzaFAyRXk2VTdMbkhEbnZzM2dIbUVkaEYwS3ByNElvOW4wbm9tZndyYVUrWkh0cmJuY1NVVmx2VwpEUXk3eU5JYkM2NHVRcktNTzBxbjFjNURIOWxkYTZuNkQyZllIbXhucVozSjV6aFczK3hDeDN2VDYzek5RakRSCnBENTB5UE1UR3cxaUIxTHNlb3ZPeU1DMGhhaUoyR3h3N0UrcWZnNmp0T2JUclNkaTJjRFBZRW80WVE3NXN5THAKMmIwNGVKV3NWWTZUM3VOeUV1UzFRUEVubjBWbERYL2FTWXdLbUFPTVlzemdDcjRpT3A0NWd4c08wMFllS2dzbgpuMXY3QWMrVUhJOWRWWXRGdlhxd0lBSTByZks5NzFMRWowT29MYUF3aURueUdjMVRCS3VqaXhodWpMRTZUOUJVClZ3bnJQTk5OeG82dWN1MnVVQUNCTlc3cXUvNVJxUXlyTjhMVHZtMEJXdk1sTGlmYTNEbUNhRVV6bVVya2FVRTAKMElqM1U5OHhnb3RvT2JYRk14cC9nM1BsMndMSEszSkxHcVcvOFIvOXA4V3U4amFQQ2crSkJlL2xwOGQzM1BuTQoyZkZXNmtkeVhGcnNYbjNIcDYzcDVQNGZHQVJaaTkyRnRpb3NDY0UzTklmOWY4c3hBUUtDQVFFQStYVW8xR0dMCnNvVWNETmh0ejZZcjAwWVR4VU5WUnh3S1lKVXJ0ZkNJUmlSVzhYSG9KcUU4VzE1SlVCNFdteDJocVBiU1VDaDYKRzFVazR5MXZOMVFtZ2N5YkNDN3lidXhpOUpHbFFvdktta25xQUZHREhtL2dPZ1l0T01DUVF6Yy9pak9paC9WLwoxUHRlbXFLRlZ2UkNZUzlXcEdWZTNnbmJhWm1rVTdWbVY3NmY3T0ZvTnM4aDZTTWZKMFJKVlBSaGszdm9YYi83CnRWNTlwSHh3Um13RWZ4dmxwNzBJMTR2dFVXOFdSRGQzTjNIcG5SY2wwRFQrdnhDNzNZSlFzMGxtcjl3Y2RKK00Kd2kydUxjM3U3eFdRY2hGSHI5Z1NrWm05dStSMUxkQ2RqSXpXM0FDUXhBRHNaUUV5MGFGTHduZlprd3RqUTBqUwo2MkJRQXBQSGJHeFc2UUtDQVFFQTFFR0QxS2VibmNKa0tYaUlKY1gzcGQxMUlhOEFWbEtESzE4N1dUWTA5TmtPCmtTb3J2RndIbko4Y29iTWF0NURLeHhGcHJEcENnQm9CT2tSWFRJV3JNRnh0bXNaeVRJeWYvdWhteGJqWmdJNzMKN2g0L0IzcC9Wclp0dGZlVElyU0JVSjhRdDAzQTEzOEpKcUlYNE8wOGZQZ3Y1SzBGd0lrVSttTlBTY2QzckFLNApwM21uTDF0RmhWcXZlWmh1WmFIL1p5TnQxT3dJZWlSODE3ZUxtWUk4KzQxN2FTM3B0WTQ1Tk1kczNveTkzbHc0CjlWMUhoaWF4TDY0SVI3b1J0djJXQk9xN0ZzZm9KV2EyRjMyeG9kMWN6OXVDYUxod2RjNHBWZFA4aEZPZWU4Q1AKMVM2UlRKTFpVVHJRQkhhV05hNmNxbHJJUk0wR2hIS3lKeXFQeUtWRThRS0NBUUVBdTljWjhKcW5PN3o1dXo1NQpxY1BCK213cFZQLzN4Zno2WDNIVUlVTkhDakl3K2N4QStGMnUra29NUUhUM3BzUHdTQy9iZkJxT24raEVSNENkCjMzYlJMQ29xajBYeXJjMzRVWnNlYXZhaWovMmFZN1Q5Vzd6NGhoakNrcHFGeHVkaVJDblBlRHRIajlQY2orcFQKSjMvMFFBUUtaTzRrT21RSHdRTzlkbjhBMm8rakV4ZEVod2oveXZMMGNYZjlGQ2lWRlI1WGdjaWZ2Qm16MkZrUApuaWVXVnpSbGdTSlo5eHpaamRsdFZkN0NPWkRnVGJieGRVK0NoOU1NODZZK0tGTGNMUTQ4cXlDOU9EWjNrdXdmCndBNW4zMHpkd3k2Y0JPRlV1cGcwR0ZTZlhnZHJmdXc2RmkxdjFEckx6b2g3YUtzZ3ZaWDBuK1RGVmhJSERYbkQKMEFQZ2lRS0NBUUJzOTNsamVleUZFQi8xdm1BKzdDUVlMZG9OUWRkdGVZekhmbXRzZ0V5dGlxVlUxdzUrODh3ZwpsdnJPOUxENW5rYkw3ZCtQUUpXVlNFUnJFbHl5OTBpTVdsY1doMXgwZWhsRmR6QVR2N05Cc2FRTXhkQmIyWUo0CkZNMjhCbTZ0K1hjTjJhdHVQMmVKK2pqTGNabktxbUJNVStuYWZ3MGQ3QUl1RFQvT1E2M25TN3BhbURUQk5oMDUKdWZXdCtoaHE2c0RBeFVxRWJleG9NRVU3UllwUWM3RTAvMHhsRWVJU2lBSk1XemxFQTRNU0hjeE1BdWhPTVp6egpPbWdiMHFWM2lUWTBMZ0dBVDM2WmZPSnNxdVcva0hJdWI2WENkeldjOVFyNWVnd0FMeUdFckxYcW5xNlBYakJjCjZGR1VpUURTYkdNWGZlV2tsSkVNL0FrRDNIRFdkQ294QW9JQkFCbXI0akRPbmFLUlhZZ1gwdW5lVUxlOENpMWMKVS9UQmpyOWs4VXNpQ2NoZnJwUmhnVTQ4QnpYSjgzZXlaVEkzWTBnU0thM2dsTHZCWFFiMGV2dlVjc0FyS09NNgpMYmx6WXRaSlRDZ1p2bkpnTEpkUnE2V0labmJWSlVsRjlkU2ZuWkJZcWkzZkRmN3o2VE01aWQyNndiZjhITkdvCnhjdmxNNEJsOHJETk5iUVlVOWJTeXBaVFkxTFZkdncwZjhSRUV1OHFDeEY0ZVIydHlXcDhKUnZnZStpYkNoTk4KUHVpdmIxOVRCS0o5c0ZUbllQRTRQbklSRFROckJMdnFJWlYvYldOaitxRG85engrdGF5dWIvR0gvSkxGQm9lWgpLZFZGL0hHUkNCTHhKY00rdWYwRkI2TUh0bjRLWlNqNnAwRE1tUmdIMFNES0ZuWkpjUFBhTEhPamFhRT0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      vizier-name: pixie
+    name: etcd-peer-tls-certs
+    namespace: pl
+    resourceVersion: "1734089"
+    uid: 825e6017-9629-4061-af6c-949d64e4f0e3
+  type: Opaque
+- apiVersion: v1
+  data:
+    server-ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZoVENDQTIyZ0F3SUJBZ0lDQm5Vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFOREZhRncwek1ERXlNamt4Ck1EQTFOREZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUUM0ak1EQ0F2Z0tzbmpmTEZiM3J6aEdqMmdqCjZYTFRSRjQ2b3c5U0dxN2o3SytyREd2RTRNVTNueFBKeEJEY2NObnUrOXlmWXpkVVJSQUR0QmE5eHBaOU5JY0EKc0NNdVVUR0NONkdwYU91QUZscEpHNXFtQ0lIOTVxVlJCZlNTQ0xVZG9nS0FXdUFJdEJRWTJiUERUM2JSd2hnSQp3N2pBRmFhUjBCT0d2VzVwVkliTTFBRzcxczdYdklRK1pXdjROejFwSW0zYUlGaGdlVGo5RVpHOGdFVzUxVHVLCmlRQThSSkxWQlF2V01IMjZzVXFxZHBHRUsweTVEVFBVTUZYdjJEMkMxcWV2bEhKVUxlaFFUUDZZT3VHSkExYUgKclIrMmh2RjlqNTI0N0NseVNXZGNEaWpEeGhjeEZEd2kvUy9palQ0SGptY2FEYVdmajd5SFF5SVVLSE42ZStqOQpUa0R4ZjlhR2JSQ2ZpellKZ01PZnNVRWR3VmNQSlA5NEtrUFVPeGZJT3YyWGNvZ0dOd1pTR1pTdTUxbGFGSkJOCnhQNS92S0FmbVpwSXhJdVJaTXFEaGxhenVJUFV6T1Y0eVNGWVlBWGNmSFJPeWQ1Z3ZpTVZoc0dTeENhNnlrMWoKMU5oOTFnQ01Wdy9zdFFqWXcrdjBEajk2emNXcXVLMWxaV2dWSElFTU43WEs5T3NRcmhXYldHdjNHUzB2alNQQgpWNEpxeWNQZkduMEIyVGRYOHZDbHIvR0tBZnkzRERZWjl0WGxXRU0rcHBjUFBNQ0x5WkpuV3NqRDZ5b2hhTjJnClBmSExEcWZ6RjZVWW9OMzczZmQ1SDkrM1ZVMnhSZkRkcE8xZG11ZnJ5amZBOStUdkRKSTRCblBERm5RczRBK3gKMCtqU2xaN1dRL2VBZGNtOWFRSURBUUFCbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQXFRd0hRWURWUjBsQkJZdwpGQVlJS3dZQkJRVUhBd0lHQ0NzR0FRVUZCd01CTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFCkZJYTBkNFRrZENhSmcyVG8xb3dpVS8wK2huK0FNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUFOZDJVOFd0eWcKOGozTkxIdGIvRDdyZkxtWTFLci9Qdk5vM1oyY044dXNXR09jdlFOUlVBblA0TDdpcVVjRllBMHdnWUo0ZVM4VgpKWlg3RVcyZktVM0NrUGE2MFVjZS93SVR6YTd0c2Q1RE5KQXZpSVNTcUZVclYxakt3TTRERmNUdnRwcUlHM3lCClNSRG5qU1krcllUZS96b2dzSHRCRkx6ZUdwNytrQU83RmZCQXhxZDBhRngxamhsY3FFYis4WDVYVWZBamFyMjIKL2hDZ0JEWldGcm1ybWJCd3QySXYvdmJwTE9hMEY4ckhETjlnNkJqb2xTRVI5ZkdGVFlsc2ZUSk4ralNCVi84agpKQjlDbE8ycnBIVDhQY2NlT3NJaWJ1SkpWemIyREJzS0h3RThNK25HSUoxSWx5UDMzWTlta2ROeGJTUjkvNDB6CjNZcXEzQjROVnoxSjZUbDZ1OWJsNU0vNXlZMXZ1R1kxRlJTeXY2RXBacEpEbEpNY2wxZ3RuRzB3VHFRUzVOaUcKR21NWC9CTE1aUVhNcDJFcWNkdlRPMXRkZHoxUzlrZXIxemJKZTdCV1lsNHJNaTJRcFNsODN2SXd1RlM1VTE4RwpTc2ZCTWgyUk5oZlRYcXI0dituM3crNkNhT2p1Q0c3NlFzOExpY0N6L2ZKVlIzZmNyVW1RUGx6Vy9aZ003ODUrCjdQL2xIWlVsKytJUkt4WTdMeVJ1WWloaVlaTjRIRitCYnM5UnRVQ3IwTXBmaU9ObXlBK2hHTXI3VlhHbVpySE4KOVJ2akZuR2dKTGNEL3JEQjcxVzM1b0VvSzhJZHFqeXlQTVRabis3Q0p5alRZcE9SZkZzZG9ZVUw4K1lUVUU5TAoxNE93RWhiRVhnWWVEWHBEWVdNdXhNYzlvWlN6ZU1IbU1RPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    server.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUYvRENDQStTZ0F3SUJBZ0lDQm5vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFORFZhRncwek1ERXlNamt4Ck1EQTFORFZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURPMU4wRmF2SURabDIzUlF4THhsREJrSWlRCldRTXJtVkUyRHkyKzBYNUtJNDV6NS9qZ1JUdkxURFpOY2NscUxEdWR4ejF3TGh6blVJVHExdWJ6aU94T1NoZXMKaW9PeTM4Q2hTR1B3a2Y2aUt3dDFzNy9XK0JZTFA5TnpOQXNXT2lnNVJZVHhHZmFWclBsOTE5blZmRjcvemVreApTcTFGaVhPWktDRXBGQlQ1RHFlS1QyWkErVy9ZZVJSYlh4U0lCRGQwYUJ2RGlLM1NWbmFMTUptY1RRQk1HbWdsCmEzSUJmYXFpL3dzNTJkZ1pwbzFrajU5RmtVdHJQM0Z4VWt0c3RHekZDYlRJenozL005RGVXclNhMFp6emtESUMKMmtaSzk2WjdqczVia2tkWDdXbDNSdjBEVWc5VzJ3NkJLK3lsWW1MUElLZGRaVng3dGExWTNkalpSMkhiL2lMcwp2NFozWWZhNW40ZnhxaDgwdEhTcE41ZXFpV1Mwd1hCdnR2Z0pyWFlDbmhFdW5WUGZBZ1U4NUN4YXlHZzVKcUtwCkJISUNRNUtJMVN5NEVaSFFBL1BpQ0VFZmxBV3RwblhzRXNvSjZPNmlDYklHaS9vTGNMTDN6Q2E5dzdKNmR3MUEKOHZqTVd3a2ppZE1aWWdrWnM0Z3FXbUplS2U2S3A0NmU0c2w1Wm9selkzaGdYM2ZRbThlb1cxRHNGMmlJS3ArKwpxWk9yWVVmc01wR2tDYUVvd3hHc1o0ZEhhNERvUlRUcmpFMmhNT2FGSlAwVFpBMVRPRzEvV1BaUkV4TTk5Z0tPCllkeE9BQVFPbzRvYlE2YzR4aTgwMlNrLzlra1hwa0k5cXBIcTVYd2I4YUtmcWRHN1d1N1hQMlhRdjJNYThZVloKVTVhanRPbWtNV05xNVVDMVdRSURBUUFCbzRIWE1JSFVNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdFd0RBWURWUjBUQVFIL0JBSXdBRENCbEFZRFZSMFJCSUdNCk1JR0pnZ2dxTG5Cc0xuTjJZNElXS2k1d2JDNXpkbU11WTJ4MWMzUmxjaTVzYjJOaGJJSVdLaTV3YkM1d2IyUXUKWTJ4MWMzUmxjaTVzYjJOaGJJSVFLaTV3YkMxbGRHTmtMbkJzTG5OMlk0SWVLaTV3YkMxbGRHTmtMbkJzTG5OMgpZeTVqYkhWemRHVnlMbXh2WTJGc2dnZHdiQzF1WVhSemdnZHdiQzFsZEdOa2dnbHNiMk5oYkdodmMzUXdEUVlKCktvWklodmNOQVFFTEJRQURnZ0lCQUpWRXIvK21Xejhva0VPKzdaVWJOdHpGd29pSDR5M0Fqd0tSY25sMll3TnkKNnR2K0NQVWlUYzZ2bTRqeXBkOFZQbXlkNlBUdDdiemFMdDRtSEd5VjdSVllPT1hnVExYZkdpZHN3aWx5enJpVApxcks5RFBBNVFwNG8vYkFFRDRMTS9ZVlZvZExvN3IwR0FGVW0rN1I0Q3BEQ2QzRm9FYk5nTEVFbFRlRlZoK2s1CnpHZ3V0TGpRZkhkcEdpUXV2cWtYWWYwazNSano1SGpyeXZ6STB2TTkxQW5HQkZvb1FHWWZ3MktHRTNVdFQvSVAKTGZLSmEwbzZhZlMxM0llclpsSFpCMkU1WDNsdk9LYm8vSWVtZnVvTGVjQUdPOC9GQ1Z4amd5SW1acEduVlZTZQpCUnlJNGllbEIrai9BOTNHaVNBNGRaM1YvUWVObXExYkx2THRlZjAwSU45aUw0RU5ZZ2RJekhtTDZ2aTZUTWR3Ck9zcTJJZVBrVkYvRTNGczlFa2hQQVNzMkZVdUFqcFNPbDV2MDJOdjJQVTRMN01zSXEzL1dlZElKeEYyYWptNEEKN2U0MjQrM1QybGFuN0J4MGN0bjBaM0tOZUhmdnY5ZVpNZlBhbkplb1UrVUJha3JPTVp1OWZlSnpvc1E5bk1lNwp3NFY3ZlBTSncyZEtSdW5zTHJKa2w1VEZ0NUxLaGNFTjM2bFp1eVhkRXk3a3FUYUcvYzFDSnNpMXU5cmVjY3lmCkoxa0c5dTBKd1hEbW9tNzRHWk1mQVdFL0trT2QwYldKanY1RXJzUEdOSExUZmdOTlJzRjE1YTRrbVZCWWtwdUgKR1lYLzh0cmtFQ3dVN0tMMEJaeXdUeDNxM0kyVlF0TWxtZFBUdkwvcjZ5WFd0NW9uOWs2RExtdUd0NnlJQlJNYQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKS0FJQkFBS0NBZ0VBenRUZEJXcnlBMlpkdDBVTVM4WlF3WkNJa0ZrREs1bFJOZzh0dnRGK1NpT09jK2Y0CjRFVTd5MHcyVFhISmFpdzduY2M5Y0M0YzUxQ0U2dGJtODRqc1Rrb1hySXFEc3QvQW9VaGo4Skgrb2lzTGRiTy8KMXZnV0N6L1RjelFMRmpvb09VV0U4Um4ybGF6NWZkZloxWHhlLzgzcE1VcXRSWWx6bVNnaEtSUVUrUTZuaWs5bQpRUGx2MkhrVVcxOFVpQVEzZEdnYnc0aXQwbFoyaXpDWm5FMEFUQnBvSld0eUFYMnFvdjhMT2RuWUdhYU5aSStmClJaRkxhejl4Y1ZKTGJMUnN4UW0weU04OS96UFEzbHEwbXRHYzg1QXlBdHBHU3ZlbWU0N09XNUpIVisxcGQwYjkKQTFJUFZ0c09nU3ZzcFdKaXp5Q25YV1ZjZTdXdFdOM1kyVWRoMi80aTdMK0dkMkgydVorSDhhb2ZOTFIwcVRlWApxb2xrdE1Gd2I3YjRDYTEyQXA0UkxwMVQzd0lGUE9Rc1dzaG9PU2FpcVFSeUFrT1NpTlVzdUJHUjBBUHo0Z2hCCkg1UUZyYVoxN0JMS0NlanVvZ215Qm92NkMzQ3k5OHdtdmNPeWVuY05RUEw0ekZzSkk0blRHV0lKR2JPSUtscGkKWGludWlxZU9udUxKZVdhSmMyTjRZRjkzMEp2SHFGdFE3QmRvaUNxZnZxbVRxMkZIN0RLUnBBbWhLTU1SckdlSApSMnVBNkVVMDY0eE5vVERtaFNUOUUyUU5Vemh0ZjFqMlVSTVRQZllDam1IY1RnQUVEcU9LRzBPbk9NWXZOTmtwClAvWkpGNlpDUGFxUjZ1VjhHL0dpbjZuUnUxcnUxejlsMEw5akd2R0ZXVk9XbzdUcHBERmphdVZBdFZrQ0F3RUEKQVFLQ0FnQm5lODFSNXA1TDRTM0dnbitTY2hqNW4rMFQrOVZBUFNlSzJyRlNwZEtBR2FZdWk4UFR3aEFXdVh6NQo1cEtWMHFmSlcyUjcralp2N2JOekpDN05icFo4M1VsWEJMNjhBb09Jcm9XQ1dpbUN6ZktmNDExNm13bThleVM2Cm9URmkzNW84ZlhIMGg3NytTRnRVQVdsMkRSSWkvczFMNGtjcllZZzYrdjhNWklYUnp1azRwRjFPNlA1eTJyRzYKdmFteUhCbjYzaFAyRXk2VTdMbkhEbnZzM2dIbUVkaEYwS3ByNElvOW4wbm9tZndyYVUrWkh0cmJuY1NVVmx2VwpEUXk3eU5JYkM2NHVRcktNTzBxbjFjNURIOWxkYTZuNkQyZllIbXhucVozSjV6aFczK3hDeDN2VDYzek5RakRSCnBENTB5UE1UR3cxaUIxTHNlb3ZPeU1DMGhhaUoyR3h3N0UrcWZnNmp0T2JUclNkaTJjRFBZRW80WVE3NXN5THAKMmIwNGVKV3NWWTZUM3VOeUV1UzFRUEVubjBWbERYL2FTWXdLbUFPTVlzemdDcjRpT3A0NWd4c08wMFllS2dzbgpuMXY3QWMrVUhJOWRWWXRGdlhxd0lBSTByZks5NzFMRWowT29MYUF3aURueUdjMVRCS3VqaXhodWpMRTZUOUJVClZ3bnJQTk5OeG82dWN1MnVVQUNCTlc3cXUvNVJxUXlyTjhMVHZtMEJXdk1sTGlmYTNEbUNhRVV6bVVya2FVRTAKMElqM1U5OHhnb3RvT2JYRk14cC9nM1BsMndMSEszSkxHcVcvOFIvOXA4V3U4amFQQ2crSkJlL2xwOGQzM1BuTQoyZkZXNmtkeVhGcnNYbjNIcDYzcDVQNGZHQVJaaTkyRnRpb3NDY0UzTklmOWY4c3hBUUtDQVFFQStYVW8xR0dMCnNvVWNETmh0ejZZcjAwWVR4VU5WUnh3S1lKVXJ0ZkNJUmlSVzhYSG9KcUU4VzE1SlVCNFdteDJocVBiU1VDaDYKRzFVazR5MXZOMVFtZ2N5YkNDN3lidXhpOUpHbFFvdktta25xQUZHREhtL2dPZ1l0T01DUVF6Yy9pak9paC9WLwoxUHRlbXFLRlZ2UkNZUzlXcEdWZTNnbmJhWm1rVTdWbVY3NmY3T0ZvTnM4aDZTTWZKMFJKVlBSaGszdm9YYi83CnRWNTlwSHh3Um13RWZ4dmxwNzBJMTR2dFVXOFdSRGQzTjNIcG5SY2wwRFQrdnhDNzNZSlFzMGxtcjl3Y2RKK00Kd2kydUxjM3U3eFdRY2hGSHI5Z1NrWm05dStSMUxkQ2RqSXpXM0FDUXhBRHNaUUV5MGFGTHduZlprd3RqUTBqUwo2MkJRQXBQSGJHeFc2UUtDQVFFQTFFR0QxS2VibmNKa0tYaUlKY1gzcGQxMUlhOEFWbEtESzE4N1dUWTA5TmtPCmtTb3J2RndIbko4Y29iTWF0NURLeHhGcHJEcENnQm9CT2tSWFRJV3JNRnh0bXNaeVRJeWYvdWhteGJqWmdJNzMKN2g0L0IzcC9Wclp0dGZlVElyU0JVSjhRdDAzQTEzOEpKcUlYNE8wOGZQZ3Y1SzBGd0lrVSttTlBTY2QzckFLNApwM21uTDF0RmhWcXZlWmh1WmFIL1p5TnQxT3dJZWlSODE3ZUxtWUk4KzQxN2FTM3B0WTQ1Tk1kczNveTkzbHc0CjlWMUhoaWF4TDY0SVI3b1J0djJXQk9xN0ZzZm9KV2EyRjMyeG9kMWN6OXVDYUxod2RjNHBWZFA4aEZPZWU4Q1AKMVM2UlRKTFpVVHJRQkhhV05hNmNxbHJJUk0wR2hIS3lKeXFQeUtWRThRS0NBUUVBdTljWjhKcW5PN3o1dXo1NQpxY1BCK213cFZQLzN4Zno2WDNIVUlVTkhDakl3K2N4QStGMnUra29NUUhUM3BzUHdTQy9iZkJxT24raEVSNENkCjMzYlJMQ29xajBYeXJjMzRVWnNlYXZhaWovMmFZN1Q5Vzd6NGhoakNrcHFGeHVkaVJDblBlRHRIajlQY2orcFQKSjMvMFFBUUtaTzRrT21RSHdRTzlkbjhBMm8rakV4ZEVod2oveXZMMGNYZjlGQ2lWRlI1WGdjaWZ2Qm16MkZrUApuaWVXVnpSbGdTSlo5eHpaamRsdFZkN0NPWkRnVGJieGRVK0NoOU1NODZZK0tGTGNMUTQ4cXlDOU9EWjNrdXdmCndBNW4zMHpkd3k2Y0JPRlV1cGcwR0ZTZlhnZHJmdXc2RmkxdjFEckx6b2g3YUtzZ3ZaWDBuK1RGVmhJSERYbkQKMEFQZ2lRS0NBUUJzOTNsamVleUZFQi8xdm1BKzdDUVlMZG9OUWRkdGVZekhmbXRzZ0V5dGlxVlUxdzUrODh3ZwpsdnJPOUxENW5rYkw3ZCtQUUpXVlNFUnJFbHl5OTBpTVdsY1doMXgwZWhsRmR6QVR2N05Cc2FRTXhkQmIyWUo0CkZNMjhCbTZ0K1hjTjJhdHVQMmVKK2pqTGNabktxbUJNVStuYWZ3MGQ3QUl1RFQvT1E2M25TN3BhbURUQk5oMDUKdWZXdCtoaHE2c0RBeFVxRWJleG9NRVU3UllwUWM3RTAvMHhsRWVJU2lBSk1XemxFQTRNU0hjeE1BdWhPTVp6egpPbWdiMHFWM2lUWTBMZ0dBVDM2WmZPSnNxdVcva0hJdWI2WENkeldjOVFyNWVnd0FMeUdFckxYcW5xNlBYakJjCjZGR1VpUURTYkdNWGZlV2tsSkVNL0FrRDNIRFdkQ294QW9JQkFCbXI0akRPbmFLUlhZZ1gwdW5lVUxlOENpMWMKVS9UQmpyOWs4VXNpQ2NoZnJwUmhnVTQ4QnpYSjgzZXlaVEkzWTBnU0thM2dsTHZCWFFiMGV2dlVjc0FyS09NNgpMYmx6WXRaSlRDZ1p2bkpnTEpkUnE2V0labmJWSlVsRjlkU2ZuWkJZcWkzZkRmN3o2VE01aWQyNndiZjhITkdvCnhjdmxNNEJsOHJETk5iUVlVOWJTeXBaVFkxTFZkdncwZjhSRUV1OHFDeEY0ZVIydHlXcDhKUnZnZStpYkNoTk4KUHVpdmIxOVRCS0o5c0ZUbllQRTRQbklSRFROckJMdnFJWlYvYldOaitxRG85engrdGF5dWIvR0gvSkxGQm9lWgpLZFZGL0hHUkNCTHhKY00rdWYwRkI2TUh0bjRLWlNqNnAwRE1tUmdIMFNES0ZuWkpjUFBhTEhPamFhRT0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      vizier-name: pixie
+    name: etcd-server-tls-certs
+    namespace: pl
+    resourceVersion: "1734091"
+    uid: 7f1ff6b2-365d-4bc9-8a74-bcaa21208375
+  type: Opaque
+- apiVersion: v1
+  data:
+    cluster-id: M2YyNTViYjEtM2IxZi00OGRhLWJmNjItOTVhNzE0Y2MxZmZk
+    cluster-name: azhzLWFrcw==
+    jwt-signing-key: YjIwNzYyMWNmNTU2MGEwYjQwMmVlMjZmZmFhZWMyNjgxYjdjNWJiM2JhMmM1MGE3N2FlMWUzMzAwMDA4MzYwNTMyNGU0NjVlM2E0YjkyYTU2ZDkwNzIxOThhMDg1Y2U5ODcwNGU5YjI5MjE3MTA4YzRmZWFmZGM5NjJmMGJjMzc=
+    sentry-dsn: aHR0cHM6Ly80OWNlNjAzMmU0ZGYxYTNiOWU1YmU3OTNjYzk4Zjg4OEBvNDUwNzM1NzYxNzE5Mjk2MC5pbmdlc3QudXMuc2VudHJ5LmlvLzQ1MDc0OTExNTIxNjY5MTM=
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:41Z"
+    labels:
+      vizier-name: pixie
+    name: pl-cluster-secrets
+    namespace: pl
+    resourceVersion: "1735335"
+    uid: aedc8e15-6943-4fcf-b44b-14ecf165b301
+  type: Opaque
+- apiVersion: v1
+  data:
+    deploy-key: cHgtZGVwLTA5YTM4MjUyLTI2OGEtNGIyMC05NDgxLTkzODc1OTdhMDFmNQ==
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:41Z"
+    labels:
+      vizier-name: pixie
+    name: pl-deploy-secrets
+    namespace: pl
+    resourceVersion: "1734055"
+    uid: 5290bee4-8c7d-47fa-ade4-ea4728689090
+  type: Opaque
+- apiVersion: v1
+  data:
+    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUYvRENDQStTZ0F3SUJBZ0lDQm5vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFORFZhRncwek1ERXlNamt4Ck1EQTFORFZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURPMU4wRmF2SURabDIzUlF4THhsREJrSWlRCldRTXJtVkUyRHkyKzBYNUtJNDV6NS9qZ1JUdkxURFpOY2NscUxEdWR4ejF3TGh6blVJVHExdWJ6aU94T1NoZXMKaW9PeTM4Q2hTR1B3a2Y2aUt3dDFzNy9XK0JZTFA5TnpOQXNXT2lnNVJZVHhHZmFWclBsOTE5blZmRjcvemVreApTcTFGaVhPWktDRXBGQlQ1RHFlS1QyWkErVy9ZZVJSYlh4U0lCRGQwYUJ2RGlLM1NWbmFMTUptY1RRQk1HbWdsCmEzSUJmYXFpL3dzNTJkZ1pwbzFrajU5RmtVdHJQM0Z4VWt0c3RHekZDYlRJenozL005RGVXclNhMFp6emtESUMKMmtaSzk2WjdqczVia2tkWDdXbDNSdjBEVWc5VzJ3NkJLK3lsWW1MUElLZGRaVng3dGExWTNkalpSMkhiL2lMcwp2NFozWWZhNW40ZnhxaDgwdEhTcE41ZXFpV1Mwd1hCdnR2Z0pyWFlDbmhFdW5WUGZBZ1U4NUN4YXlHZzVKcUtwCkJISUNRNUtJMVN5NEVaSFFBL1BpQ0VFZmxBV3RwblhzRXNvSjZPNmlDYklHaS9vTGNMTDN6Q2E5dzdKNmR3MUEKOHZqTVd3a2ppZE1aWWdrWnM0Z3FXbUplS2U2S3A0NmU0c2w1Wm9selkzaGdYM2ZRbThlb1cxRHNGMmlJS3ArKwpxWk9yWVVmc01wR2tDYUVvd3hHc1o0ZEhhNERvUlRUcmpFMmhNT2FGSlAwVFpBMVRPRzEvV1BaUkV4TTk5Z0tPCllkeE9BQVFPbzRvYlE2YzR4aTgwMlNrLzlra1hwa0k5cXBIcTVYd2I4YUtmcWRHN1d1N1hQMlhRdjJNYThZVloKVTVhanRPbWtNV05xNVVDMVdRSURBUUFCbzRIWE1JSFVNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdFd0RBWURWUjBUQVFIL0JBSXdBRENCbEFZRFZSMFJCSUdNCk1JR0pnZ2dxTG5Cc0xuTjJZNElXS2k1d2JDNXpkbU11WTJ4MWMzUmxjaTVzYjJOaGJJSVdLaTV3YkM1d2IyUXUKWTJ4MWMzUmxjaTVzYjJOaGJJSVFLaTV3YkMxbGRHTmtMbkJzTG5OMlk0SWVLaTV3YkMxbGRHTmtMbkJzTG5OMgpZeTVqYkhWemRHVnlMbXh2WTJGc2dnZHdiQzF1WVhSemdnZHdiQzFsZEdOa2dnbHNiMk5oYkdodmMzUXdEUVlKCktvWklodmNOQVFFTEJRQURnZ0lCQUpWRXIvK21Xejhva0VPKzdaVWJOdHpGd29pSDR5M0Fqd0tSY25sMll3TnkKNnR2K0NQVWlUYzZ2bTRqeXBkOFZQbXlkNlBUdDdiemFMdDRtSEd5VjdSVllPT1hnVExYZkdpZHN3aWx5enJpVApxcks5RFBBNVFwNG8vYkFFRDRMTS9ZVlZvZExvN3IwR0FGVW0rN1I0Q3BEQ2QzRm9FYk5nTEVFbFRlRlZoK2s1CnpHZ3V0TGpRZkhkcEdpUXV2cWtYWWYwazNSano1SGpyeXZ6STB2TTkxQW5HQkZvb1FHWWZ3MktHRTNVdFQvSVAKTGZLSmEwbzZhZlMxM0llclpsSFpCMkU1WDNsdk9LYm8vSWVtZnVvTGVjQUdPOC9GQ1Z4amd5SW1acEduVlZTZQpCUnlJNGllbEIrai9BOTNHaVNBNGRaM1YvUWVObXExYkx2THRlZjAwSU45aUw0RU5ZZ2RJekhtTDZ2aTZUTWR3Ck9zcTJJZVBrVkYvRTNGczlFa2hQQVNzMkZVdUFqcFNPbDV2MDJOdjJQVTRMN01zSXEzL1dlZElKeEYyYWptNEEKN2U0MjQrM1QybGFuN0J4MGN0bjBaM0tOZUhmdnY5ZVpNZlBhbkplb1UrVUJha3JPTVp1OWZlSnpvc1E5bk1lNwp3NFY3ZlBTSncyZEtSdW5zTHJKa2w1VEZ0NUxLaGNFTjM2bFp1eVhkRXk3a3FUYUcvYzFDSnNpMXU5cmVjY3lmCkoxa0c5dTBKd1hEbW9tNzRHWk1mQVdFL0trT2QwYldKanY1RXJzUEdOSExUZmdOTlJzRjE1YTRrbVZCWWtwdUgKR1lYLzh0cmtFQ3dVN0tMMEJaeXdUeDNxM0kyVlF0TWxtZFBUdkwvcjZ5WFd0NW9uOWs2RExtdUd0NnlJQlJNYQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKS0FJQkFBS0NBZ0VBenRUZEJXcnlBMlpkdDBVTVM4WlF3WkNJa0ZrREs1bFJOZzh0dnRGK1NpT09jK2Y0CjRFVTd5MHcyVFhISmFpdzduY2M5Y0M0YzUxQ0U2dGJtODRqc1Rrb1hySXFEc3QvQW9VaGo4Skgrb2lzTGRiTy8KMXZnV0N6L1RjelFMRmpvb09VV0U4Um4ybGF6NWZkZloxWHhlLzgzcE1VcXRSWWx6bVNnaEtSUVUrUTZuaWs5bQpRUGx2MkhrVVcxOFVpQVEzZEdnYnc0aXQwbFoyaXpDWm5FMEFUQnBvSld0eUFYMnFvdjhMT2RuWUdhYU5aSStmClJaRkxhejl4Y1ZKTGJMUnN4UW0weU04OS96UFEzbHEwbXRHYzg1QXlBdHBHU3ZlbWU0N09XNUpIVisxcGQwYjkKQTFJUFZ0c09nU3ZzcFdKaXp5Q25YV1ZjZTdXdFdOM1kyVWRoMi80aTdMK0dkMkgydVorSDhhb2ZOTFIwcVRlWApxb2xrdE1Gd2I3YjRDYTEyQXA0UkxwMVQzd0lGUE9Rc1dzaG9PU2FpcVFSeUFrT1NpTlVzdUJHUjBBUHo0Z2hCCkg1UUZyYVoxN0JMS0NlanVvZ215Qm92NkMzQ3k5OHdtdmNPeWVuY05RUEw0ekZzSkk0blRHV0lKR2JPSUtscGkKWGludWlxZU9udUxKZVdhSmMyTjRZRjkzMEp2SHFGdFE3QmRvaUNxZnZxbVRxMkZIN0RLUnBBbWhLTU1SckdlSApSMnVBNkVVMDY0eE5vVERtaFNUOUUyUU5Vemh0ZjFqMlVSTVRQZllDam1IY1RnQUVEcU9LRzBPbk9NWXZOTmtwClAvWkpGNlpDUGFxUjZ1VjhHL0dpbjZuUnUxcnUxejlsMEw5akd2R0ZXVk9XbzdUcHBERmphdVZBdFZrQ0F3RUEKQVFLQ0FnQm5lODFSNXA1TDRTM0dnbitTY2hqNW4rMFQrOVZBUFNlSzJyRlNwZEtBR2FZdWk4UFR3aEFXdVh6NQo1cEtWMHFmSlcyUjcralp2N2JOekpDN05icFo4M1VsWEJMNjhBb09Jcm9XQ1dpbUN6ZktmNDExNm13bThleVM2Cm9URmkzNW84ZlhIMGg3NytTRnRVQVdsMkRSSWkvczFMNGtjcllZZzYrdjhNWklYUnp1azRwRjFPNlA1eTJyRzYKdmFteUhCbjYzaFAyRXk2VTdMbkhEbnZzM2dIbUVkaEYwS3ByNElvOW4wbm9tZndyYVUrWkh0cmJuY1NVVmx2VwpEUXk3eU5JYkM2NHVRcktNTzBxbjFjNURIOWxkYTZuNkQyZllIbXhucVozSjV6aFczK3hDeDN2VDYzek5RakRSCnBENTB5UE1UR3cxaUIxTHNlb3ZPeU1DMGhhaUoyR3h3N0UrcWZnNmp0T2JUclNkaTJjRFBZRW80WVE3NXN5THAKMmIwNGVKV3NWWTZUM3VOeUV1UzFRUEVubjBWbERYL2FTWXdLbUFPTVlzemdDcjRpT3A0NWd4c08wMFllS2dzbgpuMXY3QWMrVUhJOWRWWXRGdlhxd0lBSTByZks5NzFMRWowT29MYUF3aURueUdjMVRCS3VqaXhodWpMRTZUOUJVClZ3bnJQTk5OeG82dWN1MnVVQUNCTlc3cXUvNVJxUXlyTjhMVHZtMEJXdk1sTGlmYTNEbUNhRVV6bVVya2FVRTAKMElqM1U5OHhnb3RvT2JYRk14cC9nM1BsMndMSEszSkxHcVcvOFIvOXA4V3U4amFQQ2crSkJlL2xwOGQzM1BuTQoyZkZXNmtkeVhGcnNYbjNIcDYzcDVQNGZHQVJaaTkyRnRpb3NDY0UzTklmOWY4c3hBUUtDQVFFQStYVW8xR0dMCnNvVWNETmh0ejZZcjAwWVR4VU5WUnh3S1lKVXJ0ZkNJUmlSVzhYSG9KcUU4VzE1SlVCNFdteDJocVBiU1VDaDYKRzFVazR5MXZOMVFtZ2N5YkNDN3lidXhpOUpHbFFvdktta25xQUZHREhtL2dPZ1l0T01DUVF6Yy9pak9paC9WLwoxUHRlbXFLRlZ2UkNZUzlXcEdWZTNnbmJhWm1rVTdWbVY3NmY3T0ZvTnM4aDZTTWZKMFJKVlBSaGszdm9YYi83CnRWNTlwSHh3Um13RWZ4dmxwNzBJMTR2dFVXOFdSRGQzTjNIcG5SY2wwRFQrdnhDNzNZSlFzMGxtcjl3Y2RKK00Kd2kydUxjM3U3eFdRY2hGSHI5Z1NrWm05dStSMUxkQ2RqSXpXM0FDUXhBRHNaUUV5MGFGTHduZlprd3RqUTBqUwo2MkJRQXBQSGJHeFc2UUtDQVFFQTFFR0QxS2VibmNKa0tYaUlKY1gzcGQxMUlhOEFWbEtESzE4N1dUWTA5TmtPCmtTb3J2RndIbko4Y29iTWF0NURLeHhGcHJEcENnQm9CT2tSWFRJV3JNRnh0bXNaeVRJeWYvdWhteGJqWmdJNzMKN2g0L0IzcC9Wclp0dGZlVElyU0JVSjhRdDAzQTEzOEpKcUlYNE8wOGZQZ3Y1SzBGd0lrVSttTlBTY2QzckFLNApwM21uTDF0RmhWcXZlWmh1WmFIL1p5TnQxT3dJZWlSODE3ZUxtWUk4KzQxN2FTM3B0WTQ1Tk1kczNveTkzbHc0CjlWMUhoaWF4TDY0SVI3b1J0djJXQk9xN0ZzZm9KV2EyRjMyeG9kMWN6OXVDYUxod2RjNHBWZFA4aEZPZWU4Q1AKMVM2UlRKTFpVVHJRQkhhV05hNmNxbHJJUk0wR2hIS3lKeXFQeUtWRThRS0NBUUVBdTljWjhKcW5PN3o1dXo1NQpxY1BCK213cFZQLzN4Zno2WDNIVUlVTkhDakl3K2N4QStGMnUra29NUUhUM3BzUHdTQy9iZkJxT24raEVSNENkCjMzYlJMQ29xajBYeXJjMzRVWnNlYXZhaWovMmFZN1Q5Vzd6NGhoakNrcHFGeHVkaVJDblBlRHRIajlQY2orcFQKSjMvMFFBUUtaTzRrT21RSHdRTzlkbjhBMm8rakV4ZEVod2oveXZMMGNYZjlGQ2lWRlI1WGdjaWZ2Qm16MkZrUApuaWVXVnpSbGdTSlo5eHpaamRsdFZkN0NPWkRnVGJieGRVK0NoOU1NODZZK0tGTGNMUTQ4cXlDOU9EWjNrdXdmCndBNW4zMHpkd3k2Y0JPRlV1cGcwR0ZTZlhnZHJmdXc2RmkxdjFEckx6b2g3YUtzZ3ZaWDBuK1RGVmhJSERYbkQKMEFQZ2lRS0NBUUJzOTNsamVleUZFQi8xdm1BKzdDUVlMZG9OUWRkdGVZekhmbXRzZ0V5dGlxVlUxdzUrODh3ZwpsdnJPOUxENW5rYkw3ZCtQUUpXVlNFUnJFbHl5OTBpTVdsY1doMXgwZWhsRmR6QVR2N05Cc2FRTXhkQmIyWUo0CkZNMjhCbTZ0K1hjTjJhdHVQMmVKK2pqTGNabktxbUJNVStuYWZ3MGQ3QUl1RFQvT1E2M25TN3BhbURUQk5oMDUKdWZXdCtoaHE2c0RBeFVxRWJleG9NRVU3UllwUWM3RTAvMHhsRWVJU2lBSk1XemxFQTRNU0hjeE1BdWhPTVp6egpPbWdiMHFWM2lUWTBMZ0dBVDM2WmZPSnNxdVcva0hJdWI2WENkeldjOVFyNWVnd0FMeUdFckxYcW5xNlBYakJjCjZGR1VpUURTYkdNWGZlV2tsSkVNL0FrRDNIRFdkQ294QW9JQkFCbXI0akRPbmFLUlhZZ1gwdW5lVUxlOENpMWMKVS9UQmpyOWs4VXNpQ2NoZnJwUmhnVTQ4QnpYSjgzZXlaVEkzWTBnU0thM2dsTHZCWFFiMGV2dlVjc0FyS09NNgpMYmx6WXRaSlRDZ1p2bkpnTEpkUnE2V0labmJWSlVsRjlkU2ZuWkJZcWkzZkRmN3o2VE01aWQyNndiZjhITkdvCnhjdmxNNEJsOHJETk5iUVlVOWJTeXBaVFkxTFZkdncwZjhSRUV1OHFDeEY0ZVIydHlXcDhKUnZnZStpYkNoTk4KUHVpdmIxOVRCS0o5c0ZUbllQRTRQbklSRFROckJMdnFJWlYvYldOaitxRG85engrdGF5dWIvR0gvSkxGQm9lWgpLZFZGL0hHUkNCTHhKY00rdWYwRkI2TUh0bjRLWlNqNnAwRE1tUmdIMFNES0ZuWkpjUFBhTEhPamFhRT0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      vizier-name: pixie
+    name: proxy-tls-certs
+    namespace: pl
+    resourceVersion: "1734087"
+    uid: 77b2eb33-b5ea-4628-b886-fce453f8aba5
+  type: Opaque
+- apiVersion: v1
+  data:
+    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZoVENDQTIyZ0F3SUJBZ0lDQm5Vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFOREZhRncwek1ERXlNamt4Ck1EQTFOREZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUUM0ak1EQ0F2Z0tzbmpmTEZiM3J6aEdqMmdqCjZYTFRSRjQ2b3c5U0dxN2o3SytyREd2RTRNVTNueFBKeEJEY2NObnUrOXlmWXpkVVJSQUR0QmE5eHBaOU5JY0EKc0NNdVVUR0NONkdwYU91QUZscEpHNXFtQ0lIOTVxVlJCZlNTQ0xVZG9nS0FXdUFJdEJRWTJiUERUM2JSd2hnSQp3N2pBRmFhUjBCT0d2VzVwVkliTTFBRzcxczdYdklRK1pXdjROejFwSW0zYUlGaGdlVGo5RVpHOGdFVzUxVHVLCmlRQThSSkxWQlF2V01IMjZzVXFxZHBHRUsweTVEVFBVTUZYdjJEMkMxcWV2bEhKVUxlaFFUUDZZT3VHSkExYUgKclIrMmh2RjlqNTI0N0NseVNXZGNEaWpEeGhjeEZEd2kvUy9palQ0SGptY2FEYVdmajd5SFF5SVVLSE42ZStqOQpUa0R4ZjlhR2JSQ2ZpellKZ01PZnNVRWR3VmNQSlA5NEtrUFVPeGZJT3YyWGNvZ0dOd1pTR1pTdTUxbGFGSkJOCnhQNS92S0FmbVpwSXhJdVJaTXFEaGxhenVJUFV6T1Y0eVNGWVlBWGNmSFJPeWQ1Z3ZpTVZoc0dTeENhNnlrMWoKMU5oOTFnQ01Wdy9zdFFqWXcrdjBEajk2emNXcXVLMWxaV2dWSElFTU43WEs5T3NRcmhXYldHdjNHUzB2alNQQgpWNEpxeWNQZkduMEIyVGRYOHZDbHIvR0tBZnkzRERZWjl0WGxXRU0rcHBjUFBNQ0x5WkpuV3NqRDZ5b2hhTjJnClBmSExEcWZ6RjZVWW9OMzczZmQ1SDkrM1ZVMnhSZkRkcE8xZG11ZnJ5amZBOStUdkRKSTRCblBERm5RczRBK3gKMCtqU2xaN1dRL2VBZGNtOWFRSURBUUFCbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQXFRd0hRWURWUjBsQkJZdwpGQVlJS3dZQkJRVUhBd0lHQ0NzR0FRVUZCd01CTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFCkZJYTBkNFRrZENhSmcyVG8xb3dpVS8wK2huK0FNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUFOZDJVOFd0eWcKOGozTkxIdGIvRDdyZkxtWTFLci9Qdk5vM1oyY044dXNXR09jdlFOUlVBblA0TDdpcVVjRllBMHdnWUo0ZVM4VgpKWlg3RVcyZktVM0NrUGE2MFVjZS93SVR6YTd0c2Q1RE5KQXZpSVNTcUZVclYxakt3TTRERmNUdnRwcUlHM3lCClNSRG5qU1krcllUZS96b2dzSHRCRkx6ZUdwNytrQU83RmZCQXhxZDBhRngxamhsY3FFYis4WDVYVWZBamFyMjIKL2hDZ0JEWldGcm1ybWJCd3QySXYvdmJwTE9hMEY4ckhETjlnNkJqb2xTRVI5ZkdGVFlsc2ZUSk4ralNCVi84agpKQjlDbE8ycnBIVDhQY2NlT3NJaWJ1SkpWemIyREJzS0h3RThNK25HSUoxSWx5UDMzWTlta2ROeGJTUjkvNDB6CjNZcXEzQjROVnoxSjZUbDZ1OWJsNU0vNXlZMXZ1R1kxRlJTeXY2RXBacEpEbEpNY2wxZ3RuRzB3VHFRUzVOaUcKR21NWC9CTE1aUVhNcDJFcWNkdlRPMXRkZHoxUzlrZXIxemJKZTdCV1lsNHJNaTJRcFNsODN2SXd1RlM1VTE4RwpTc2ZCTWgyUk5oZlRYcXI0dituM3crNkNhT2p1Q0c3NlFzOExpY0N6L2ZKVlIzZmNyVW1RUGx6Vy9aZ003ODUrCjdQL2xIWlVsKytJUkt4WTdMeVJ1WWloaVlaTjRIRitCYnM5UnRVQ3IwTXBmaU9ObXlBK2hHTXI3VlhHbVpySE4KOVJ2akZuR2dKTGNEL3JEQjcxVzM1b0VvSzhJZHFqeXlQTVRabis3Q0p5alRZcE9SZkZzZG9ZVUw4K1lUVUU5TAoxNE93RWhiRVhnWWVEWHBEWVdNdXhNYzlvWlN6ZU1IbU1RPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    client.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUYvRENDQStTZ0F3SUJBZ0lDQm5vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFOREphRncwek1ERXlNamt4Ck1EQTFOREphTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUUM0MmNISTZLWFd3UVdyRHMwV2lyS1ROTzZrCkRzT2UwaDRyT0FjVHhCS3NZbFVOUjA3akVtT3F2ZjB2ZFVFZXhiZjQxS2dsY2liYUxYbXBjQ29wbHo5VFEyYWsKTWZUajk0ZkZxMTRFdGd2bEMzcE1mTDM0a0dwOHFvdmx0emlkaG1zTysyK0pmeFVEcTdqSzJ6R0xOV0NickhqLwpKT2ptRmdrS2xyS2daZjZBQUVKTnJKZWFsN1dRZkMyTUttODNEMWtEYXd6MlhpOW1DVUZna09ERGFtQjhVeWlSCmZydDRCclJMWTE3RHQwOTd0eDVLbFJ5QmNqTzJvZWZBQXF1c2VSMzFFT3loa2owalk1K082K1h2UkR2WXh2OGoKN2pCM05ZK1Y2Y3A4c2RhSGE1VTNvNHl4TUIzYXhySDZReVFuZWhDcnJqaEtiRlBxOFlrTUtjOU5XaEZ2cVh3WAplTlFuS3J3a3RiT0t0Y1V1cE1WWmFjSFE3MXd4enl1VHJNU29tV3ZRNk41T2dmZDJiMEhCcGpyKy9aUEZiOE5JCkhaemZJRnRwRlNKNXQwYU4rRXRFOXVoR1RKZXpjcUZ2Z3dxckdWdnZ5YkFyZ1hiTUhUaWJtc3kveUlPNzFSTnUKYjQrNVg0RHI1K283R1ZzdHRLcDZ0VnFLdU1rNGpqT0JBTVZsU0JNOTl4Vm1uTWxHMXg0eUEyek1XanExWXpIQwppWXFpQWlOeklranRpMzhkSWxXQnpDeUhHaXV4VXdCcEV0Vmk0bStqK0QxN0h5akM3ZjB2blJtd0lqS2tGdUJZCktXbkN4REF0TzFCczhYbEdvYnBNSllGbUJsMnM5MmRjY0dlV3V0WFRUMjNzeTRCRmtVVUM5d2lseklBS3BNOVQKb29iRGs0U0JOOFc2enJac25RSURBUUFCbzRIWE1JSFVNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdFd0RBWURWUjBUQVFIL0JBSXdBRENCbEFZRFZSMFJCSUdNCk1JR0pnZ2dxTG5Cc0xuTjJZNElXS2k1d2JDNXpkbU11WTJ4MWMzUmxjaTVzYjJOaGJJSVdLaTV3YkM1d2IyUXUKWTJ4MWMzUmxjaTVzYjJOaGJJSVFLaTV3YkMxbGRHTmtMbkJzTG5OMlk0SWVLaTV3YkMxbGRHTmtMbkJzTG5OMgpZeTVqYkhWemRHVnlMbXh2WTJGc2dnZHdiQzF1WVhSemdnZHdiQzFsZEdOa2dnbHNiMk5oYkdodmMzUXdEUVlKCktvWklodmNOQVFFTEJRQURnZ0lCQUZyb1pzVW42YkhzWkNaUkNZVHFrOU5lRzNrOEl0U1V0U3RIUCtDd2pCS0QKMWpYVWV4OUYxT09YQUdtRkFaaExhN1FXVnpkWWczYkNFdVg2U3I0Z2UxbFAxWFBDaWptWC96bThoYlhKdkdFSQowYkpHY01yUk1lN1MrMVJ2cTd5TmhjVjAxYTNodC9rWHhTbjVMZ1EzSGlwbmNtV3U0QUVQWVR6SGczQlM0ZVBoClRqRzVrNG9vYXpFcjdVbFZ3OTdRckFwRkNnTkFIbHQ5M2pWMS9JeG5ETzBOYWtmOHlXdGtsa0Zrd2tmUTVqenEKY1JZTnh2Q0JMQTA0V2RWSzNaOUI4YkUvWlA4UHlkbmZ3R3VUTVJXbW1uYjVpUG9raXdsalEvM29KS2Qwcjl2YwpIV0cwcjNGSjdoYndVcy96dXBvSy83cnRXRzlsU1pMS3h2RHA3TVczOCswbVdrQVc1bTZjK1lyWGUxRy82T0p0CndRQXF2RnJmL3pDUDZjajNHc1VObU4zZE8vR2p5VEVQeXFIVjBRVkY0dTVHNGs3MkVSNUtRblYyRS9Ua1NESWoKMFlVa2RyYUIxeVJNbFFZYmVzQTNYYkJqWGl0N08wSHBLK0FzaVZQV0d5OVFDcXlIZ0J4MjFTNDNVMVR2dUs5RwpXUllNSFNaemJKbTNrTW9oekJOdS80Y2VaSXFsL2VLekliNEdMQndUaXQ5Y3hrRWlqcXdoSmdMZzY2cUhEajk1CldiV25EOU1PR3pJMFEvZHFLT29EYU5wcldRM1dZV2d1dDFiWEovcENOYjdTK0NOUUVobEM3YXdVVEJBUnh2cWsKQ0MvZENKb1M1TDF1Yjh5TUFUeUhqTHR3SFhkZ0xDTjNuK1BCZHhZb296bzczblJrMXNGYjQxS1czNXA3ei9iRQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    client.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKSndJQkFBS0NBZ0VBdU5uQnlPaWwxc0VGcXc3TkZvcXlrelR1cEE3RG50SWVLemdIRThRU3JHSlZEVWRPCjR4SmpxcjM5TDNWQkhzVzMrTlNvSlhJbTJpMTVxWEFxS1pjL1UwTm1wREgwNC9lSHhhdGVCTFlMNVF0NlRIeTkKK0pCcWZLcUw1YmM0bllackR2dHZpWDhWQTZ1NHl0c3hpelZnbTZ4NC95VG81aFlKQ3BheW9HWCtnQUJDVGF5WAptcGUxa0h3dGpDcHZOdzlaQTJzTTlsNHZaZ2xCWUpEZ3cycGdmRk1va1g2N2VBYTBTMk5ldzdkUGU3Y2VTcFVjCmdYSXp0cUhud0FLcnJIa2Q5UkRzb1pJOUkyT2ZqdXZsNzBRNzJNYi9JKzR3ZHpXUGxlbktmTEhXaDJ1Vk42T00Kc1RBZDJzYXgra01rSjNvUXE2NDRTbXhUNnZHSkRDblBUVm9SYjZsOEYzalVKeXE4SkxXemlyWEZMcVRGV1duQgowTzljTWM4cms2ekVxSmxyME9qZVRvSDNkbTlCd2FZNi92MlR4Vy9EU0IyYzN5QmJhUlVpZWJkR2pmaExSUGJvClJreVhzM0toYjRNS3F4bGI3OG13SzRGMnpCMDRtNXJNdjhpRHU5VVRibStQdVYrQTYrZnFPeGxiTGJTcWVyVmEKaXJqSk9JNHpnUURGWlVnVFBmY1ZacHpKUnRjZU1nTnN6Rm82dFdNeHdvbUtvZ0lqY3lKSTdZdC9IU0pWZ2N3cwpoeG9yc1ZNQWFSTFZZdUp2by9nOWV4OG93dTM5TDUwWnNDSXlwQmJnV0NscHdzUXdMVHRRYlBGNVJxRzZUQ1dCClpnWmRyUGRuWEhCbmxyclYwMDl0N011QVJaRkZBdmNJcGN5QUNxVFBVNktHdzVPRWdUZkZ1czYyYkowQ0F3RUEKQVFLQ0FnQXd5dkgyNlVvVkpNQXRSZXZtdmxlaXViOGdPUEZ6ODd5WTVlSWdXb29mVEpsc3R0emczVkxIbC96RAowU3lPUmR4bzV5RTNPU2wrUDdDMGcvSHRKb3BGblMzenUyZ0w0S1BMRG8venFHWDlZSWs0dFZpanl1TUE0emVvClBEUEtpTmVyamIwRVN6SXQxTjhqVkxhQUsyZkR6OFBrZlVhb3JUcFh2QzJNWHovTlk4UWNvcWtsMmxQSHZxOTcKSnh4U0tVL3lzZ2dxNC9PWStHcDBaZW1lUzI4S2doemNRdHFUTlJuVUtIZTBLNmZrWFJLMjF5TStHL29BaEQ0YgpGZGxnM2x1RSs2R3FpR0p3Ky9QN0V0T1AwN0FFYVlxaFhsY1dzR0dsVFovd1NEVDdhKzlvVDFoczBPbWdmUUF2CnNoZFNBRXQwTmJtUUU0WVhKd2hvMklScXc1S0VOeGxCaDlWOHBHcVRQNHJCbnN3R2krZTgxZWNlOERPakJCSloKSC9obGsrdndTcVZ1V3Y4M0Y0bVFrNy9BeFZPU0o5aUtCaW9rbmRhYThsaGcrTEtWbmVtV2hjQ0FHbkVSbnNuZApsbXo4bURRbDh3d3FYSUJIRFpnWGxydkpyRkMvMFVyTW9VSklIWVQrdXNibGtVbC9OM21YOWUzMEFDM2VZa1UzClFRcjJweVp2dHp5ZXJoR3h6UzNOY3BVUmNsc0xvckVaNG5MSVpNQmYwZXVheTVlV3FNL2tkNG05dUFsempNcHQKVkI1VU4yTnh2WitISzh4N0lYem1LMCtpc3VvUUZ6Snl2YitjYVBNNTRwZEV1aWl3MFRuSUREZXZscFJ4aVNUTQo0SVd3ZmtjcDhObnQxZUJFMlNRNy9jOWQ5RjRwckZ3WnpUdkJWeTVrdHBWc0JLOHh0UUtDQVFFQTNYaUJLYSs5ClRtMXBZYnlZVHVZRXViY0tDZm9NN0FMMWpSL29CRmdqa0hscWU2MVZJajM4R2JyVHJ2VEwyTmFHRTNXUUtJeDgKMm4xSm5nL2xiaVNFbUp0Tm9ObHdYUUtaNVFidXV1QUU3WmdRcHdzV1lFNUdFSUtZL0xrN0xFem55UVRQSnpWNwpvc2xRbTBTM0hlSGVYK1dKRkxKZmVnM1lKaUJPNHV5d1E0R2JITkY4cTNRU2pOMnhOM0FMRjEzc0JxV3V5MCtuCkx0NlJON2lwSWRWc2FPbWdBZi9UazJzR3dvdEM3VDFpV0JvU2I3NCtRcnJObFg5QzFmay83QWwvN2lmYlhWNXIKTUVadWovM3VIeGoyVE56VTdZT2pqSnBUbWpjR0ZVRElJYm9uRGh1dC9ObkRMb012VGdFRFBMK0QybmNKTHZseQp2bllhTENqRWVXNFlrd0tDQVFFQTFhdWxGM0MxTDhTaS8xaTBJdHprL05NaWI3QjlhMVJWZHRkbU1GYysvUjE5CmhMWFYzYXFlYXFaUXlUT1RWVGJYQ2hvcGtmRGR3SkxyZmszakdnR1VLWFprdFFqZnY0ZHN6OVdwZlFhaEVBbFYKYnBiYTV2WUNERzE2MStzTmdvL2lUQ2ZBVTdDQzJXeThzLzJFZEFITjM3YzBVUjJ6TW9LaGNhOW14QmNTbWlhMworWmErRlowQ09udUtQMVdYRkQxZ2RXSU9OeEMvUU5OODByTzJ4ZUcyd1pVQXhZS1BBY0Z0VnRGUUJNYVJjNjdGCnJxaVN0NlUvTFJLUkNkNzc5ZnVpdWljYmhmZk9RUGo5WDVTK1o2RE9Zd0R2Q3VPa28wbU9LOXc4cFc2UW4weUkKei9zczQ1cUd6ZkVYWkg0U1BEb3pGUVdNdm5CdmI4T2doZk5nZDNxVUR3S0NBUUFobXA4K2pBUFZXcFNhMTlyawpYZEpwdTNReWYxWm1tU3hZOVhabThsaXpHemtrK3UvbitpKytWN0syNFQzczhOLzNJK2R6djUxU0thQjU4eitFCnJ0WFBzZ0RkWHlERmZCZU53TGVJYzJWTUI3Ni9HZGVUVlUwY1JEU2laQml1YUJ6alMyK0RLNEpPK096YUlsc0cKbGJjQUpmdmV3QkhzbXgwbzY4NE1jSTF1TU1Rd1l6amZhd1ZGaW4zUlE1YnJQTDBMWlNoWWdRV0UveEJadkJNdApwd3lEL3E3Z25zaWpuYUd3OHlCOGpzdlZRbDk1eFF2OVpBcTluRW12M2RudEhxUGlwdm1KK1VHYVdaVjlFN0tGCjFXdkp6ZGdoRWRCSERVT1NLcmNwa21MTGUwdGh3S0Z0dEQwQldiWmJ4NXVPSkNFRmpQby92bW5DckhqY0tuTmwKV1djeEFvSUJBQWpUWFM5WnJYSTZxZ3pvQ2hEQ2xRYklaY3k5T29EN2E4aEwzMkd4eU4xRm9aQ2d2aU80ejNCUwpURlh6Tm11M3B5dzRwbXpyeVEwU1JIM2tFN1JZU2xsb0ZZTFF5Z1VzUDlkWjJQVmNGNzBFMWEyS3Q2SUFtVmNRCkVwbm1rSmxLL2lydEhXbVhpZUFYT0xncWlaVU5HZ2JhbDJPZVdXK0ZxOHQ1VmtKVlBhUjJZdlVCUC9xK2tILy8KNkZielh4a3I2OWNOWk03cmR5cmpVVzJXbEw4WnNxWE9WTWpUdXJwMDFlSlhKUG45aGJhRWlvL0xVTHdiTEQvZApXM1pQNnBKZmdYbzA4Vk1ZU0VHd3h5NXlnMmJlWW9mK1d1RlZROUNtMGlPSHBrMmpBb0JCOWdpNU5FSjJlSWo3CkkxODRRZUtRK05rdWNJRFJQaGtjdUgydjd0VWdrQXNDZ2dFQWJwQ2hiTVpoUWIrRDBpOSt6S2xuSXFLdG9LSlQKeTROYnJYbEpXUk9RdkRSWU9GUXZNdHlCVitjRjl6OFFWZlhUcXA5bWVkQllXT0hFOTJiazY3MHUzc0IvaEVJbgpCNU90Y0tzbFZrRmYzcEo5TWI2elduOFBqR1lFTndNaUNVVXNCYklxYmZpd1N0TUNHV013Wk5FZnFpV05BeENUCjFlZnI0YkpZUWwzQkV4RTRzUTFsWHF1THdTUUVRZEtPc3RTK2E2K3Y4TjhMVmw2bnJtUUdja211YVdGTXYxdlcKN0ppQ2QxajdXOGdiUlEvRDFHNkVjWk1zeW03NjZFZ0JhVkFnbjcrVFNIMlBObGpTVFBTR3RvRTNkbU0vcjlRNwpHMjdLRjJjSXFBNW01WDdDVTNGY0o2ODM0cnRpejR0YTRLalpwZGVidTFZMjU1dXZxV2Y1bzN6ZTdnPT0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K
+    server.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUYvRENDQStTZ0F3SUJBZ0lDQm5vd0RRWUpLb1pJaHZjTkFRRUxCUUF3VkRFTE1Ba0dBMVVFQmhNQ1ZWTXgKRXpBUkJnTlZCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4R0RBVwpCZ05WQkFvVEQxQnBlR2xsSUV4aFluTWdTVzVqTGpBZUZ3MHlOVEV5TWpreE1EQTFORFZhRncwek1ERXlNamt4Ck1EQTFORFZhTUZReEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWUQKVlFRSEV3MVRZVzRnUm5KaGJtTnBjMk52TVJnd0ZnWURWUVFLRXc5UWFYaHBaU0JNWVdKeklFbHVZeTR3Z2dJaQpNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURPMU4wRmF2SURabDIzUlF4THhsREJrSWlRCldRTXJtVkUyRHkyKzBYNUtJNDV6NS9qZ1JUdkxURFpOY2NscUxEdWR4ejF3TGh6blVJVHExdWJ6aU94T1NoZXMKaW9PeTM4Q2hTR1B3a2Y2aUt3dDFzNy9XK0JZTFA5TnpOQXNXT2lnNVJZVHhHZmFWclBsOTE5blZmRjcvemVreApTcTFGaVhPWktDRXBGQlQ1RHFlS1QyWkErVy9ZZVJSYlh4U0lCRGQwYUJ2RGlLM1NWbmFMTUptY1RRQk1HbWdsCmEzSUJmYXFpL3dzNTJkZ1pwbzFrajU5RmtVdHJQM0Z4VWt0c3RHekZDYlRJenozL005RGVXclNhMFp6emtESUMKMmtaSzk2WjdqczVia2tkWDdXbDNSdjBEVWc5VzJ3NkJLK3lsWW1MUElLZGRaVng3dGExWTNkalpSMkhiL2lMcwp2NFozWWZhNW40ZnhxaDgwdEhTcE41ZXFpV1Mwd1hCdnR2Z0pyWFlDbmhFdW5WUGZBZ1U4NUN4YXlHZzVKcUtwCkJISUNRNUtJMVN5NEVaSFFBL1BpQ0VFZmxBV3RwblhzRXNvSjZPNmlDYklHaS9vTGNMTDN6Q2E5dzdKNmR3MUEKOHZqTVd3a2ppZE1aWWdrWnM0Z3FXbUplS2U2S3A0NmU0c2w1Wm9selkzaGdYM2ZRbThlb1cxRHNGMmlJS3ArKwpxWk9yWVVmc01wR2tDYUVvd3hHc1o0ZEhhNERvUlRUcmpFMmhNT2FGSlAwVFpBMVRPRzEvV1BaUkV4TTk5Z0tPCllkeE9BQVFPbzRvYlE2YzR4aTgwMlNrLzlra1hwa0k5cXBIcTVYd2I4YUtmcWRHN1d1N1hQMlhRdjJNYThZVloKVTVhanRPbWtNV05xNVVDMVdRSURBUUFCbzRIWE1JSFVNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdFd0RBWURWUjBUQVFIL0JBSXdBRENCbEFZRFZSMFJCSUdNCk1JR0pnZ2dxTG5Cc0xuTjJZNElXS2k1d2JDNXpkbU11WTJ4MWMzUmxjaTVzYjJOaGJJSVdLaTV3YkM1d2IyUXUKWTJ4MWMzUmxjaTVzYjJOaGJJSVFLaTV3YkMxbGRHTmtMbkJzTG5OMlk0SWVLaTV3YkMxbGRHTmtMbkJzTG5OMgpZeTVqYkhWemRHVnlMbXh2WTJGc2dnZHdiQzF1WVhSemdnZHdiQzFsZEdOa2dnbHNiMk5oYkdodmMzUXdEUVlKCktvWklodmNOQVFFTEJRQURnZ0lCQUpWRXIvK21Xejhva0VPKzdaVWJOdHpGd29pSDR5M0Fqd0tSY25sMll3TnkKNnR2K0NQVWlUYzZ2bTRqeXBkOFZQbXlkNlBUdDdiemFMdDRtSEd5VjdSVllPT1hnVExYZkdpZHN3aWx5enJpVApxcks5RFBBNVFwNG8vYkFFRDRMTS9ZVlZvZExvN3IwR0FGVW0rN1I0Q3BEQ2QzRm9FYk5nTEVFbFRlRlZoK2s1CnpHZ3V0TGpRZkhkcEdpUXV2cWtYWWYwazNSano1SGpyeXZ6STB2TTkxQW5HQkZvb1FHWWZ3MktHRTNVdFQvSVAKTGZLSmEwbzZhZlMxM0llclpsSFpCMkU1WDNsdk9LYm8vSWVtZnVvTGVjQUdPOC9GQ1Z4amd5SW1acEduVlZTZQpCUnlJNGllbEIrai9BOTNHaVNBNGRaM1YvUWVObXExYkx2THRlZjAwSU45aUw0RU5ZZ2RJekhtTDZ2aTZUTWR3Ck9zcTJJZVBrVkYvRTNGczlFa2hQQVNzMkZVdUFqcFNPbDV2MDJOdjJQVTRMN01zSXEzL1dlZElKeEYyYWptNEEKN2U0MjQrM1QybGFuN0J4MGN0bjBaM0tOZUhmdnY5ZVpNZlBhbkplb1UrVUJha3JPTVp1OWZlSnpvc1E5bk1lNwp3NFY3ZlBTSncyZEtSdW5zTHJKa2w1VEZ0NUxLaGNFTjM2bFp1eVhkRXk3a3FUYUcvYzFDSnNpMXU5cmVjY3lmCkoxa0c5dTBKd1hEbW9tNzRHWk1mQVdFL0trT2QwYldKanY1RXJzUEdOSExUZmdOTlJzRjE1YTRrbVZCWWtwdUgKR1lYLzh0cmtFQ3dVN0tMMEJaeXdUeDNxM0kyVlF0TWxtZFBUdkwvcjZ5WFd0NW9uOWs2RExtdUd0NnlJQlJNYQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKS0FJQkFBS0NBZ0VBenRUZEJXcnlBMlpkdDBVTVM4WlF3WkNJa0ZrREs1bFJOZzh0dnRGK1NpT09jK2Y0CjRFVTd5MHcyVFhISmFpdzduY2M5Y0M0YzUxQ0U2dGJtODRqc1Rrb1hySXFEc3QvQW9VaGo4Skgrb2lzTGRiTy8KMXZnV0N6L1RjelFMRmpvb09VV0U4Um4ybGF6NWZkZloxWHhlLzgzcE1VcXRSWWx6bVNnaEtSUVUrUTZuaWs5bQpRUGx2MkhrVVcxOFVpQVEzZEdnYnc0aXQwbFoyaXpDWm5FMEFUQnBvSld0eUFYMnFvdjhMT2RuWUdhYU5aSStmClJaRkxhejl4Y1ZKTGJMUnN4UW0weU04OS96UFEzbHEwbXRHYzg1QXlBdHBHU3ZlbWU0N09XNUpIVisxcGQwYjkKQTFJUFZ0c09nU3ZzcFdKaXp5Q25YV1ZjZTdXdFdOM1kyVWRoMi80aTdMK0dkMkgydVorSDhhb2ZOTFIwcVRlWApxb2xrdE1Gd2I3YjRDYTEyQXA0UkxwMVQzd0lGUE9Rc1dzaG9PU2FpcVFSeUFrT1NpTlVzdUJHUjBBUHo0Z2hCCkg1UUZyYVoxN0JMS0NlanVvZ215Qm92NkMzQ3k5OHdtdmNPeWVuY05RUEw0ekZzSkk0blRHV0lKR2JPSUtscGkKWGludWlxZU9udUxKZVdhSmMyTjRZRjkzMEp2SHFGdFE3QmRvaUNxZnZxbVRxMkZIN0RLUnBBbWhLTU1SckdlSApSMnVBNkVVMDY0eE5vVERtaFNUOUUyUU5Vemh0ZjFqMlVSTVRQZllDam1IY1RnQUVEcU9LRzBPbk9NWXZOTmtwClAvWkpGNlpDUGFxUjZ1VjhHL0dpbjZuUnUxcnUxejlsMEw5akd2R0ZXVk9XbzdUcHBERmphdVZBdFZrQ0F3RUEKQVFLQ0FnQm5lODFSNXA1TDRTM0dnbitTY2hqNW4rMFQrOVZBUFNlSzJyRlNwZEtBR2FZdWk4UFR3aEFXdVh6NQo1cEtWMHFmSlcyUjcralp2N2JOekpDN05icFo4M1VsWEJMNjhBb09Jcm9XQ1dpbUN6ZktmNDExNm13bThleVM2Cm9URmkzNW84ZlhIMGg3NytTRnRVQVdsMkRSSWkvczFMNGtjcllZZzYrdjhNWklYUnp1azRwRjFPNlA1eTJyRzYKdmFteUhCbjYzaFAyRXk2VTdMbkhEbnZzM2dIbUVkaEYwS3ByNElvOW4wbm9tZndyYVUrWkh0cmJuY1NVVmx2VwpEUXk3eU5JYkM2NHVRcktNTzBxbjFjNURIOWxkYTZuNkQyZllIbXhucVozSjV6aFczK3hDeDN2VDYzek5RakRSCnBENTB5UE1UR3cxaUIxTHNlb3ZPeU1DMGhhaUoyR3h3N0UrcWZnNmp0T2JUclNkaTJjRFBZRW80WVE3NXN5THAKMmIwNGVKV3NWWTZUM3VOeUV1UzFRUEVubjBWbERYL2FTWXdLbUFPTVlzemdDcjRpT3A0NWd4c08wMFllS2dzbgpuMXY3QWMrVUhJOWRWWXRGdlhxd0lBSTByZks5NzFMRWowT29MYUF3aURueUdjMVRCS3VqaXhodWpMRTZUOUJVClZ3bnJQTk5OeG82dWN1MnVVQUNCTlc3cXUvNVJxUXlyTjhMVHZtMEJXdk1sTGlmYTNEbUNhRVV6bVVya2FVRTAKMElqM1U5OHhnb3RvT2JYRk14cC9nM1BsMndMSEszSkxHcVcvOFIvOXA4V3U4amFQQ2crSkJlL2xwOGQzM1BuTQoyZkZXNmtkeVhGcnNYbjNIcDYzcDVQNGZHQVJaaTkyRnRpb3NDY0UzTklmOWY4c3hBUUtDQVFFQStYVW8xR0dMCnNvVWNETmh0ejZZcjAwWVR4VU5WUnh3S1lKVXJ0ZkNJUmlSVzhYSG9KcUU4VzE1SlVCNFdteDJocVBiU1VDaDYKRzFVazR5MXZOMVFtZ2N5YkNDN3lidXhpOUpHbFFvdktta25xQUZHREhtL2dPZ1l0T01DUVF6Yy9pak9paC9WLwoxUHRlbXFLRlZ2UkNZUzlXcEdWZTNnbmJhWm1rVTdWbVY3NmY3T0ZvTnM4aDZTTWZKMFJKVlBSaGszdm9YYi83CnRWNTlwSHh3Um13RWZ4dmxwNzBJMTR2dFVXOFdSRGQzTjNIcG5SY2wwRFQrdnhDNzNZSlFzMGxtcjl3Y2RKK00Kd2kydUxjM3U3eFdRY2hGSHI5Z1NrWm05dStSMUxkQ2RqSXpXM0FDUXhBRHNaUUV5MGFGTHduZlprd3RqUTBqUwo2MkJRQXBQSGJHeFc2UUtDQVFFQTFFR0QxS2VibmNKa0tYaUlKY1gzcGQxMUlhOEFWbEtESzE4N1dUWTA5TmtPCmtTb3J2RndIbko4Y29iTWF0NURLeHhGcHJEcENnQm9CT2tSWFRJV3JNRnh0bXNaeVRJeWYvdWhteGJqWmdJNzMKN2g0L0IzcC9Wclp0dGZlVElyU0JVSjhRdDAzQTEzOEpKcUlYNE8wOGZQZ3Y1SzBGd0lrVSttTlBTY2QzckFLNApwM21uTDF0RmhWcXZlWmh1WmFIL1p5TnQxT3dJZWlSODE3ZUxtWUk4KzQxN2FTM3B0WTQ1Tk1kczNveTkzbHc0CjlWMUhoaWF4TDY0SVI3b1J0djJXQk9xN0ZzZm9KV2EyRjMyeG9kMWN6OXVDYUxod2RjNHBWZFA4aEZPZWU4Q1AKMVM2UlRKTFpVVHJRQkhhV05hNmNxbHJJUk0wR2hIS3lKeXFQeUtWRThRS0NBUUVBdTljWjhKcW5PN3o1dXo1NQpxY1BCK213cFZQLzN4Zno2WDNIVUlVTkhDakl3K2N4QStGMnUra29NUUhUM3BzUHdTQy9iZkJxT24raEVSNENkCjMzYlJMQ29xajBYeXJjMzRVWnNlYXZhaWovMmFZN1Q5Vzd6NGhoakNrcHFGeHVkaVJDblBlRHRIajlQY2orcFQKSjMvMFFBUUtaTzRrT21RSHdRTzlkbjhBMm8rakV4ZEVod2oveXZMMGNYZjlGQ2lWRlI1WGdjaWZ2Qm16MkZrUApuaWVXVnpSbGdTSlo5eHpaamRsdFZkN0NPWkRnVGJieGRVK0NoOU1NODZZK0tGTGNMUTQ4cXlDOU9EWjNrdXdmCndBNW4zMHpkd3k2Y0JPRlV1cGcwR0ZTZlhnZHJmdXc2RmkxdjFEckx6b2g3YUtzZ3ZaWDBuK1RGVmhJSERYbkQKMEFQZ2lRS0NBUUJzOTNsamVleUZFQi8xdm1BKzdDUVlMZG9OUWRkdGVZekhmbXRzZ0V5dGlxVlUxdzUrODh3ZwpsdnJPOUxENW5rYkw3ZCtQUUpXVlNFUnJFbHl5OTBpTVdsY1doMXgwZWhsRmR6QVR2N05Cc2FRTXhkQmIyWUo0CkZNMjhCbTZ0K1hjTjJhdHVQMmVKK2pqTGNabktxbUJNVStuYWZ3MGQ3QUl1RFQvT1E2M25TN3BhbURUQk5oMDUKdWZXdCtoaHE2c0RBeFVxRWJleG9NRVU3UllwUWM3RTAvMHhsRWVJU2lBSk1XemxFQTRNU0hjeE1BdWhPTVp6egpPbWdiMHFWM2lUWTBMZ0dBVDM2WmZPSnNxdVcva0hJdWI2WENkeldjOVFyNWVnd0FMeUdFckxYcW5xNlBYakJjCjZGR1VpUURTYkdNWGZlV2tsSkVNL0FrRDNIRFdkQ294QW9JQkFCbXI0akRPbmFLUlhZZ1gwdW5lVUxlOENpMWMKVS9UQmpyOWs4VXNpQ2NoZnJwUmhnVTQ4QnpYSjgzZXlaVEkzWTBnU0thM2dsTHZCWFFiMGV2dlVjc0FyS09NNgpMYmx6WXRaSlRDZ1p2bkpnTEpkUnE2V0labmJWSlVsRjlkU2ZuWkJZcWkzZkRmN3o2VE01aWQyNndiZjhITkdvCnhjdmxNNEJsOHJETk5iUVlVOWJTeXBaVFkxTFZkdncwZjhSRUV1OHFDeEY0ZVIydHlXcDhKUnZnZStpYkNoTk4KUHVpdmIxOVRCS0o5c0ZUbllQRTRQbklSRFROckJMdnFJWlYvYldOaitxRG85engrdGF5dWIvR0gvSkxGQm9lWgpLZFZGL0hHUkNCTHhKY00rdWYwRkI2TUh0bjRLWlNqNnAwRE1tUmdIMFNES0ZuWkpjUFBhTEhPamFhRT0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K
+  kind: Secret
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T10:05:46Z"
+    labels:
+      vizier-name: pixie
+    name: service-tls-certs
+    namespace: pl
+    resourceVersion: "1734088"
+    uid: 0a282e33-2187-495b-a547-f6d54d14087a
+  type: Opaque
+kind: List
+metadata:
+  resourceVersion: ""
