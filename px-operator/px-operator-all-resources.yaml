@@ -1,0 +1,6148 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2025-12-29T09:55:26Z"
+    generateName: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b-
+    generation: 1
+    labels:
+      batch.kubernetes.io/controller-uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+      batch.kubernetes.io/job-name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+      controller-uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+      job-name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+      olm.managed: "true"
+    name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b77w2jk
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: batch/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Job
+      name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+      uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+    resourceVersion: "1729198"
+    uid: 1ff7c38b-efad-45c3-8dd2-d547104382b1
+  spec:
+    containers:
+    - command:
+      - opm
+      - alpha
+      - bundle
+      - extract
+      - -m
+      - /bundle/
+      - -n
+      - px-operator
+      - -c
+      - 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+      - -z
+      env:
+      - name: CONTAINER_IMAGE
+        value: gcr.io/pixie-oss/pixie-prod/operator/bundle:0.1.7
+      image: quay.io/operator-framework/opm@sha256:d999588bd4e9509ec9e75e49adfb6582d256e9421e454c7fb5e9fe57e7b1aada
+      imagePullPolicy: IfNotPresent
+      name: extract
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /bundle
+        name: bundle
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gkk6h
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - /bin/cp
+      - -Rv
+      - /bin/cpb
+      - /util/cpb
+      image: quay.io/operator-framework/olm@sha256:1b6002156f568d722c29138575733591037c24b4bfabc67946f268ce4752c3e6
+      imagePullPolicy: IfNotPresent
+      name: util
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /util
+        name: util
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gkk6h
+        readOnly: true
+    - command:
+      - /util/cpb
+      - /bundle
+      image: gcr.io/pixie-oss/pixie-prod/operator/bundle:0.1.7
+      imagePullPolicy: Always
+      name: pull
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /bundle
+        name: bundle
+      - mountPath: /util
+        name: util
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gkk6h
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    nodeSelector:
+      kubernetes.io/os: linux
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: kubernetes.io/arch
+      operator: Equal
+      value: amd64
+    - key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
+    - key: kubernetes.io/arch
+      operator: Equal
+      value: ppc64le
+    - key: kubernetes.io/arch
+      operator: Equal
+      value: s390x
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - emptyDir: {}
+      name: bundle
+    - emptyDir: {}
+      name: util
+    - name: kube-api-access-gkk6h
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:34Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:29Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:25Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:25Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:26Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 10m
+        memory: 50Mi
+      containerID: containerd://0507998835c9fe5444e1c556a5273669aa5ca2ab356d3c3cfce40ba8c98f06c8
+      image: sha256:7546f522d289f6b23962e19aba211f850933645f8d2750055e0577b01f81333d
+      imageID: quay.io/operator-framework/opm@sha256:d999588bd4e9509ec9e75e49adfb6582d256e9421e454c7fb5e9fe57e7b1aada
+      lastState: {}
+      name: extract
+      ready: false
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://0507998835c9fe5444e1c556a5273669aa5ca2ab356d3c3cfce40ba8c98f06c8
+          exitCode: 0
+          finishedAt: "2025-12-29T09:55:32Z"
+          reason: Completed
+          startedAt: "2025-12-29T09:55:32Z"
+      volumeMounts:
+      - mountPath: /bundle
+        name: bundle
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gkk6h
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    initContainerStatuses:
+    - allocatedResources:
+        cpu: 10m
+        memory: 50Mi
+      containerID: containerd://2daf8b6dd3f86da5ee6f1c43204e2c4414265025d5f459ff2fe3ddaf268f5019
+      image: sha256:60c42bb3ef5e47d90259d2b25b1408504ca06668b6d59743fee1a635e2289dbf
+      imageID: quay.io/operator-framework/olm@sha256:1b6002156f568d722c29138575733591037c24b4bfabc67946f268ce4752c3e6
+      lastState: {}
+      name: util
+      ready: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://2daf8b6dd3f86da5ee6f1c43204e2c4414265025d5f459ff2fe3ddaf268f5019
+          exitCode: 0
+          finishedAt: "2025-12-29T09:55:26Z"
+          reason: Completed
+          startedAt: "2025-12-29T09:55:26Z"
+      volumeMounts:
+      - mountPath: /util
+        name: util
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gkk6h
+        readOnly: true
+        recursiveReadOnly: Disabled
+    - allocatedResources:
+        cpu: 10m
+        memory: 50Mi
+      containerID: containerd://7b3f3099ed81c188f542ecf592811e495bef027bbe6f672c1159ce707f9316b1
+      image: gcr.io/pixie-oss/pixie-prod/operator/bundle:0.1.7
+      imageID: gcr.io/pixie-oss/pixie-prod/operator/bundle@sha256:4c8ddd61d02a1b51a440c975aeff2d7ca174637cb8d7b1ece4281daa7b5a18ff
+      lastState: {}
+      name: pull
+      ready: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://7b3f3099ed81c188f542ecf592811e495bef027bbe6f672c1159ce707f9316b1
+          exitCode: 0
+          finishedAt: "2025-12-29T09:55:29Z"
+          reason: Completed
+          startedAt: "2025-12-29T09:55:29Z"
+      volumeMounts:
+      - mountPath: /bundle
+        name: bundle
+      - mountPath: /util
+        name: util
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gkk6h
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Succeeded
+    podIP: 10.244.0.184
+    podIPs:
+    - ip: 10.244.0.184
+    qosClass: Burstable
+    startTime: "2025-12-29T09:55:25Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generateName: kelvin-7b6fdbfb9f-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: kelvin
+      plane: data
+      pod-template-hash: 7b6fdbfb9f
+      vizier-name: pixie
+    name: kelvin-7b6fdbfb9f-df6kq
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kelvin-7b6fdbfb9f
+      uid: 6090b8b3-285c-4752-b9b5-e6ccb46f9ddd
+    resourceVersion: "1990080"
+    uid: 5fb716eb-af80-4d2b-9183-cbd9ca3eb96a
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_CLUSTER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+      - name: PL_SENTRY_DSN
+        valueFrom:
+          secretKeyRef:
+            key: sentry-dsn
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_HOST_PATH
+        value: /host
+      - name: PL_POD_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.podIP
+      - name: PL_HOST_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_VIZIER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: TCMALLOC_SAMPLE_PARAMETER
+        value: "1048576"
+      envFrom:
+      - configMapRef:
+          name: pl-tls-config
+      image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      name: app
+      ports:
+      - containerPort: 59300
+        protocol: TCP
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w4k2
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-cloud-connector-svc
+      - name: SERVICE_PORT
+        value: "50800"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: cc-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w4k2
+        readOnly: true
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-query-broker-svc
+      - name: SERVICE_PORT
+        value: "50300"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: qb-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w4k2
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - hostPath:
+        path: /sys
+        type: Directory
+      name: sys
+    - name: kube-api-access-6w4k2
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:15Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:12Z"
+      message: 'containers with incomplete status: [cc-wait qb-wait]'
+      reason: ContainersNotInitialized
+      status: "False"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:12Z"
+      message: 'containers with unready status: [app]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:12Z"
+      message: 'containers with unready status: [app]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:12Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+      imageID: ""
+      lastState: {}
+      name: app
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        waiting:
+          reason: PodInitializing
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w4k2
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    initContainerStatuses:
+    - containerID: containerd://653db47d9e32176d67146c0015bab81a99d28b35c520b78b92d8e2bbb65f00cc
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: cc-wait
+      ready: false
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T20:15:14Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w4k2
+        readOnly: true
+        recursiveReadOnly: Disabled
+    - image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imageID: ""
+      lastState: {}
+      name: qb-wait
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        waiting:
+          reason: PodInitializing
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w4k2
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Pending
+    podIP: 10.244.0.125
+    podIPs:
+    - ip: 10.244.0.125
+    qosClass: BestEffort
+    startTime: "2025-12-29T20:15:12Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    creationTimestamp: "2025-12-29T09:55:14Z"
+    generateName: pixie-operator-index-
+    generation: 1
+    labels:
+      olm.catalogSource: pixie-operator-index
+      olm.managed: "true"
+      olm.pod-spec-hash: qYpvPBlmuCgQiSdmpH8x2N3j63KmFaPgx0O2D
+    name: pixie-operator-index-qbnzb
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: operators.coreos.com/v1alpha1
+      blockOwnerDeletion: false
+      controller: true
+      kind: CatalogSource
+      name: pixie-operator-index
+      uid: d97438ea-bf9a-4d7d-bb5c-3b9abd2da90a
+    resourceVersion: "1729106"
+    uid: 65defd88-20d7-47e4-848f-23e872b76091
+  spec:
+    containers:
+    - image: gcr.io/pixie-oss/pixie-prod/operator/bundle_index:0.0.1
+      imagePullPolicy: Always
+      livenessProbe:
+        exec:
+          command:
+          - grpc_health_probe
+          - -addr=:50051
+        failureThreshold: 3
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: registry-server
+      ports:
+      - containerPort: 50051
+        name: grpc
+        protocol: TCP
+      readinessProbe:
+        exec:
+          command:
+          - grpc_health_probe
+          - -addr=:50051
+        failureThreshold: 3
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      securityContext:
+        readOnlyRootFilesystem: false
+      startupProbe:
+        exec:
+          command:
+          - grpc_health_probe
+          - -addr=:50051
+        failureThreshold: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-vcx2l
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    nodeSelector:
+      kubernetes.io/os: linux
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: pixie-operator-index
+    serviceAccountName: pixie-operator-index
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      operator: Equal
+      value: amd64
+    - effect: NoExecute
+      key: kubernetes.io/arch
+      operator: Equal
+      value: amd64
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
+    - effect: NoExecute
+      key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: kube-api-access-vcx2l
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:17Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:14Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:24Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:24Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T09:55:14Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 10m
+        memory: 50Mi
+      containerID: containerd://a33cbbeb93b0780b9229c903b6015f30987b71b8b5b7db65423947e464b47162
+      image: gcr.io/pixie-oss/pixie-prod/operator/bundle_index:0.0.1
+      imageID: gcr.io/pixie-oss/pixie-prod/operator/bundle_index@sha256:1f69b7bb1ce9bd6b0898ae15bf6d17f07669c0958a964da973b3560f84cb9ba4
+      lastState: {}
+      name: registry-server
+      ready: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T09:55:17Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-vcx2l
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    phase: Running
+    podIP: 10.244.0.244
+    podIPs:
+    - ip: 10.244.0.244
+    qosClass: Burstable
+    startTime: "2025-12-29T09:55:14Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generateName: pl-nats-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      apps.kubernetes.io/pod-index: "0"
+      controller-revision-hash: pl-nats-5d6d6dff7c
+      name: pl-nats
+      plane: control
+      statefulset.kubernetes.io/pod-name: pl-nats-0
+      vizier-name: pixie
+    name: pl-nats-0
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: pl-nats
+      uid: 2dc47b2a-a4d7-408a-955c-20cf67ca6331
+    resourceVersion: "1990155"
+    uid: 487cc677-167a-4332-b4b3-593e42fbfe79
+  spec:
+    containers:
+    - command:
+      - nats-server
+      - --config
+      - /etc/nats-config/nats.conf
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: CLUSTER_ADVERTISE
+        value: $(POD_NAME).pl-nats.$(POD_NAMESPACE).svc
+      image: gcr.io/pixie-oss/pixie-prod/vizier-deps/nats:2.9.19-scratch@sha256:5de59286eb54ead4d4a9279846098d4097b9c17a3c0588182398a7250cde1af9
+      imagePullPolicy: IfNotPresent
+      lifecycle:
+        preStop:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - /nats-server -sl=ldm=/var/run/nats/nats.pid && /bin/sleep 60
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 8222
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: pl-nats
+      ports:
+      - containerPort: 4222
+        name: client
+        protocol: TCP
+      - containerPort: 7422
+        name: leafnodes
+        protocol: TCP
+      - containerPort: 6222
+        name: cluster
+        protocol: TCP
+      - containerPort: 8222
+        name: monitor
+        protocol: TCP
+      - containerPort: 7777
+        name: metrics
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 8222
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/nats-config
+        name: config-volume
+      - mountPath: /etc/nats-server-tls-certs
+        name: nats-server-tls-volume
+      - mountPath: /var/run/nats
+        name: pid
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-9q2lr
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: pl-nats-0
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    shareProcessNamespace: true
+    subdomain: pl-nats
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: nats-server-tls-volume
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - configMap:
+        defaultMode: 420
+        name: nats-config
+      name: config-volume
+    - emptyDir: {}
+      name: pid
+    - name: kube-api-access-9q2lr
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:13Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:12Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:24Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:24Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:12Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://2ef79c94fc91bc0258636bb8ba860dea0802f5735db8204ea22c52b9c5ebedf1
+      image: sha256:4ad6c7d3b1be3c0ba5ad262181b43033c367c1fc2c39763f125ec5c6c857570a
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-deps/nats@sha256:5de59286eb54ead4d4a9279846098d4097b9c17a3c0588182398a7250cde1af9
+      lastState: {}
+      name: pl-nats
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T20:15:13Z"
+      volumeMounts:
+      - mountPath: /etc/nats-config
+        name: config-volume
+      - mountPath: /etc/nats-server-tls-certs
+        name: nats-server-tls-volume
+      - mountPath: /var/run/nats
+        name: pid
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-9q2lr
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    phase: Running
+    podIP: 10.244.1.81
+    podIPs:
+    - ip: 10.244.1.81
+    qosClass: BestEffort
+    startTime: "2025-12-29T20:15:12Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      px.dev/metrics_port: "50400"
+      px.dev/metrics_scrape: "true"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generateName: vizier-metadata-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      apps.kubernetes.io/pod-index: "0"
+      component: vizier
+      controller-revision-hash: vizier-metadata-54694b9648
+      name: vizier-metadata
+      plane: control
+      statefulset.kubernetes.io/pod-name: vizier-metadata-0
+      vizier-name: pixie
+    name: vizier-metadata-0
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: vizier-metadata
+      uid: 6caa7a4a-5799-4f3a-bd6b-fcb049a7c13f
+    resourceVersion: "1990636"
+    uid: f377510b-1e48-401a-9c3f-e46abd5733b2
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_MAX_EXPECTED_CLOCK_SKEW
+        value: "2000"
+      - name: PL_RENEW_PERIOD
+        value: "7500"
+      - name: PL_ETCD_OPERATOR_ENABLED
+        value: "false"
+      envFrom:
+      - configMapRef:
+          name: pl-tls-config
+      image: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 50400
+          scheme: HTTPS
+        initialDelaySeconds: 120
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: app
+      readinessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /healthz
+          port: 50400
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /metadata
+        name: metadata-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wtkb
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: vizier-metadata-0
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+        until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200
+        ]; do echo "waiting for ${URL}"; sleep 2; done;
+      env:
+      - name: SERVICE_NAME
+        value: pl-nats-mgmt
+      - name: SERVICE_PORT
+        value: "8222"
+      - name: HEALTH_PATH
+      - name: PROTOCOL
+        value: http
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: nats-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wtkb
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: metadata-service-account
+    serviceAccountName: metadata-service-account
+    subdomain: vizier-metadata
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: metadata-volume
+      persistentVolumeClaim:
+        claimName: metadata-pv-claim
+    - name: kube-api-access-5wtkb
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:32Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:48Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:16:20Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:16:20Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T20:15:14Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://bf7989a3d098ae7819cbb8cb35446b6a8b3dd83913d2ee526cedb16eb7e216b4
+      image: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image@sha256:3c2e07eeb209f53c982724173457c8650301e4b36e29d3d93e7196c6e56a7cc5
+      lastState: {}
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T20:15:49Z"
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /metadata
+        name: metadata-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wtkb
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://3bfe1890c4f379acac255f2b0e11909883837a0a037a39e21d3b267851210278
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: nats-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://3bfe1890c4f379acac255f2b0e11909883837a0a037a39e21d3b267851210278
+          exitCode: 0
+          finishedAt: "2025-12-29T20:15:48Z"
+          reason: Completed
+          startedAt: "2025-12-29T20:15:32Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5wtkb
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.244.1.151
+    podIPs:
+    - ip: 10.244.1.151
+    qosClass: BestEffort
+    startTime: "2025-12-29T20:15:14Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      olm.operatorGroup: global-operators
+      olm.operatorNamespace: px-operator
+      olm.targetNamespaces: ""
+      operatorframework.io/properties: '{"properties":[{"type":"olm.package","value":{"packageName":"pixie-operator","version":"0.1.7"}},{"type":"olm.gvk","value":{"group":"px.dev","kind":"Vizier","version":"v1alpha1"}}]}'
+    creationTimestamp: "2025-12-29T22:27:29Z"
+    generateName: vizier-operator-7648ff4c7b-
+    generation: 1
+    labels:
+      app: pixie-operator
+      component: pixie-operator
+      name: vizier-operator
+      plane: control
+      pod-template-hash: 7648ff4c7b
+    name: vizier-operator-7648ff4c7b-2mxj7
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: vizier-operator-7648ff4c7b
+      uid: ed9df914-414f-409f-9179-b3deda0e9665
+    resourceVersion: "2047740"
+    uid: a5dde3bf-873d-4db5-81d3-e0c77a17eabf
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: OPERATOR_CONDITION_NAME
+        value: pixie-operator.v0.1.7
+      image: gcr.io/pixie-oss/pixie-prod/operator-operator_image:0.1.7
+      imagePullPolicy: IfNotPresent
+      name: app
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-rkqb6
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: pixie-operator-service-account
+    serviceAccountName: pixie-operator-service-account
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      operator: Equal
+      value: amd64
+    - effect: NoExecute
+      key: kubernetes.io/arch
+      operator: Equal
+      value: amd64
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
+    - effect: NoExecute
+      key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-rkqb6
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T22:27:31Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T22:27:29Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T22:27:31Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T22:27:31Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-29T22:27:29Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://2628041baefa6127ce9608f33dcd1dacfca4a9b45a6a484da9fda06a8e05fb6f
+      image: gcr.io/pixie-oss/pixie-prod/operator-operator_image:0.1.7
+      imageID: gcr.io/pixie-oss/pixie-prod/operator-operator_image@sha256:f596c0293ca825c22beb316a10ac6999ee28abfef260609bdb2909bd470095d7
+      lastState: {}
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-29T22:27:30Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-rkqb6
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    phase: Running
+    podIP: 10.244.0.23
+    podIPs:
+    - ip: 10.244.0.23
+    qosClass: BestEffort
+    startTime: "2025-12-29T22:27:29Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2025-12-30T00:24:01Z"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:24:01Z"
+    generateName: vizier-pem-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      controller-revision-hash: c487775d4
+      name: vizier-pem
+      plane: data
+      pod-template-generation: "4"
+      vizier-name: pixie
+    name: vizier-pem-67r95
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: vizier-pem
+      uid: b73ce7a3-468d-4a5e-bed4-6eb0a2e54874
+    resourceVersion: "2100832"
+    uid: 45c53b76-9cbe-4270-9824-e649acb34973
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - aks-nodepool1-41991914-vmss000000
+    containers:
+    - env:
+      - name: PL_PEM_ENV_VAR_PLACEHOLDER
+        value: "true"
+      - name: PL_TABLE_STORE_DATA_LIMIT_MB
+        value: "1228"
+      - name: TCMALLOC_SAMPLE_PARAMETER
+        value: "1048576"
+      - name: PL_CLIENT_TLS_CERT
+        value: /certs/client.crt
+      - name: PL_CLIENT_TLS_KEY
+        value: /certs/client.key
+      - name: PL_TLS_CA_CERT
+        value: /certs/ca.crt
+      - name: PL_DISABLE_SSL
+        value: "false"
+      - name: PL_HOST_PATH
+        value: /host
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_HOST_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_VIZIER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_CLOCK_CONVERTER
+        value: default
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      name: pem
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      securityContext:
+        capabilities:
+          add:
+          - SYS_PTRACE
+          - SYS_ADMIN
+        privileged: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-cln7c
+        readOnly: true
+    dnsPolicy: ClusterFirstWithHostNet
+    enableServiceLinks: true
+    hostNetwork: true
+    hostPID: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-query-broker-svc
+      - name: SERVICE_PORT
+        value: "50300"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: qb-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-cln7c
+        readOnly: true
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 10
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/pid-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /
+        type: Directory
+      name: host-root
+    - hostPath:
+        path: /sys
+        type: Directory
+      name: sys
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: kube-api-access-cln7c
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T00:24:01Z"
+      message: '0/2 nodes are available: 1 Insufficient memory, 1 node(s) didn''t
+        satisfy plugin(s) [NodeAffinity]. preemption: 0/2 nodes are available: 1 No
+        preemption victims found for incoming pod, 1 Preemption is not helpful for
+        scheduling.'
+      reason: Unschedulable
+      status: "False"
+      type: PodScheduled
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2025-12-30T00:24:01Z"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:24:02Z"
+    generateName: vizier-pem-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      controller-revision-hash: c487775d4
+      name: vizier-pem
+      plane: data
+      pod-template-generation: "4"
+      vizier-name: pixie
+    name: vizier-pem-k7zcs
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: vizier-pem
+      uid: b73ce7a3-468d-4a5e-bed4-6eb0a2e54874
+    resourceVersion: "2121978"
+    uid: c03ec838-0ad6-41af-b3cd-323bd9867881
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - aks-nodepool1-41991914-vmss000001
+    containers:
+    - env:
+      - name: PL_PEM_ENV_VAR_PLACEHOLDER
+        value: "true"
+      - name: PL_TABLE_STORE_DATA_LIMIT_MB
+        value: "1228"
+      - name: TCMALLOC_SAMPLE_PARAMETER
+        value: "1048576"
+      - name: PL_CLIENT_TLS_CERT
+        value: /certs/client.crt
+      - name: PL_CLIENT_TLS_KEY
+        value: /certs/client.key
+      - name: PL_TLS_CA_CERT
+        value: /certs/ca.crt
+      - name: PL_DISABLE_SSL
+        value: "false"
+      - name: PL_HOST_PATH
+        value: /host
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_HOST_IP
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_VIZIER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_VIZIER_NAME
+        valueFrom:
+          secretKeyRef:
+            key: cluster-name
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_CLOCK_CONVERTER
+        value: default
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      name: pem
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      securityContext:
+        capabilities:
+          add:
+          - SYS_PTRACE
+          - SYS_ADMIN
+        privileged: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2q886
+        readOnly: true
+    dnsPolicy: ClusterFirstWithHostNet
+    enableServiceLinks: true
+    hostNetwork: true
+    hostPID: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-query-broker-svc
+      - name: SERVICE_PORT
+        value: "50300"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: qb-wait
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2q886
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000001
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 10
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/pid-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /
+        type: Directory
+      name: host-root
+    - hostPath:
+        path: /sys
+        type: Directory
+      name: sys
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - name: kube-api-access-2q886
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T00:24:03Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:09:56Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:09:57Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:09:57Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T00:24:02Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        memory: 2Gi
+      containerID: containerd://7c95c1c0a713976d66e05729c3435937f84333d305ef4fd14eeee1285bb61198
+      image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-pem_image@sha256:e17e8b40fda3a51a385581578e34154e2c4b7f629903bec647c8465837fda121
+      lastState: {}
+      name: pem
+      ready: true
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-30T01:09:56Z"
+      volumeMounts:
+      - mountPath: /host
+        name: host-root
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /sys
+        name: sys
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2q886
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.5
+    hostIPs:
+    - ip: 10.224.0.5
+    initContainerStatuses:
+    - containerID: containerd://2b62f436e5576ebb60d86ce6a3d84c36dba1fd47911fb2967c0ae6171d1edc8f
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: qb-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://2b62f436e5576ebb60d86ce6a3d84c36dba1fd47911fb2967c0ae6171d1edc8f
+          exitCode: 0
+          finishedAt: "2025-12-30T01:09:55Z"
+          reason: Completed
+          startedAt: "2025-12-30T00:24:03Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2q886
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.224.0.5
+    podIPs:
+    - ip: 10.224.0.5
+    qosClass: Burstable
+    startTime: "2025-12-30T00:24:02Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2025-12-30T01:10:06Z"
+      px.dev/metrics_port: "50300"
+      px.dev/metrics_scrape: "true"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T01:10:06Z"
+    generateName: vizier-query-broker-5dc57d6ff-
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 5dc57d6ff
+      vizier-name: pixie
+    name: vizier-query-broker-5dc57d6ff-2m6ld
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: vizier-query-broker-5dc57d6ff
+      uid: 25ebad89-5bab-45c3-a758-11f4aebe5fd7
+    resourceVersion: "2122122"
+    uid: 5c6b420e-9007-4a7b-ae55-7ad3558e201d
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/os
+              operator: Exists
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+          - matchExpressions:
+            - key: beta.kubernetes.io/os
+              operator: Exists
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+    containers:
+    - env:
+      - name: PL_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: PL_CLUSTER_ID
+        valueFrom:
+          secretKeyRef:
+            key: cluster-id
+            name: pl-cluster-secrets
+      - name: PL_SENTRY_DSN
+        valueFrom:
+          secretKeyRef:
+            key: sentry-dsn
+            name: pl-cluster-secrets
+            optional: true
+      - name: PL_JWT_SIGNING_KEY
+        valueFrom:
+          secretKeyRef:
+            key: jwt-signing-key
+            name: pl-cluster-secrets
+      - name: PL_POD_IP_ADDRESS
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.podIP
+      - name: PL_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: PL_CLOUD_ADDR
+        valueFrom:
+          configMapKeyRef:
+            key: PL_CLOUD_ADDR
+            name: pl-cloud-config
+      - name: PL_DATA_ACCESS
+        value: Full
+      envFrom:
+      - configMapRef:
+          name: pl-tls-config
+      image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 50300
+          scheme: HTTPS
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: app
+      ports:
+      - containerPort: 50300
+        protocol: TCP
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fwjnx
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-cloud-connector-svc.pl.svc.cluster.local
+      - name: SERVICE_PORT
+        value: "50800"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: cc-wait
+      resources: {}
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fwjnx
+        readOnly: true
+    - command:
+      - sh
+      - -c
+      - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until [ $(curl
+        -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ]; do echo "waiting
+        for ${URL}"; sleep 2; done; '
+      env:
+      - name: SERVICE_NAME
+        value: vizier-metadata-svc
+      - name: SERVICE_PORT
+        value: "50400"
+      image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      imagePullPolicy: IfNotPresent
+      name: mds-wait
+      resources: {}
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fwjnx
+        readOnly: true
+    nodeName: aks-nodepool1-41991914-vmss000000
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 10100
+      runAsGroup: 10100
+      runAsNonRoot: true
+      runAsUser: 10100
+      seccompProfile:
+        type: RuntimeDefault
+    serviceAccount: query-broker-service-account
+    serviceAccountName: query-broker-service-account
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: certs
+      secret:
+        defaultMode: 420
+        secretName: service-tls-certs
+    - configMap:
+        defaultMode: 420
+        name: proxy-envoy-config
+      name: envoy-yaml
+    - name: kube-api-access-fwjnx
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:10:08Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:10:12Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:10:13Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:10:13Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-30T01:10:06Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://c55ea53fa32133f030ec3b8b53a338a7f018041d36d75a2d325e29615b69b4a5
+      image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+      imageID: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image@sha256:d20204368b519a1bf9a04662ea276b70522a45837199a32791f01993b2dc5426
+      lastState: {}
+      name: app
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2025-12-30T01:10:12Z"
+      volumeMounts:
+      - mountPath: /certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fwjnx
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 10.224.0.4
+    hostIPs:
+    - ip: 10.224.0.4
+    initContainerStatuses:
+    - containerID: containerd://6d04579d96eb8e835720c0553af6200fb5100154ac0203c8e14da19d4011ad8c
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: cc-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://6d04579d96eb8e835720c0553af6200fb5100154ac0203c8e14da19d4011ad8c
+          exitCode: 0
+          finishedAt: "2025-12-30T01:10:07Z"
+          reason: Completed
+          startedAt: "2025-12-30T01:10:07Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fwjnx
+        readOnly: true
+        recursiveReadOnly: Disabled
+    - containerID: containerd://f2c7d84432f86ecb5a1055675c7255adad0e55827dc080e096d12d0f2bd6b08c
+      image: sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49
+      imageID: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+      lastState: {}
+      name: mds-wait
+      ready: true
+      resources: {}
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://f2c7d84432f86ecb5a1055675c7255adad0e55827dc080e096d12d0f2bd6b08c
+          exitCode: 0
+          finishedAt: "2025-12-30T01:10:11Z"
+          reason: Completed
+          startedAt: "2025-12-30T01:10:08Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fwjnx
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.244.0.5
+    podIPs:
+    - ip: 10.244.0.5
+    qosClass: BestEffort
+    startTime: "2025-12-30T01:10:06Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: kelvin-service
+    namespace: px-operator
+    resourceVersion: "1989936"
+    uid: 7e6bde3e-457d-43a6-b441-60b990eac2b2
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 59300
+      protocol: TCP
+      targetPort: 59300
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: kelvin
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2025-12-29T09:55:15Z"
+    labels:
+      olm.managed: "true"
+      olm.service-spec-hash: 86tR8B6cikUf2HQ1vX85N36poIFXvm4WEXPiiQ
+    name: pixie-operator-index
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: operators.coreos.com/v1alpha1
+      blockOwnerDeletion: false
+      controller: false
+      kind: CatalogSource
+      name: pixie-operator-index
+      uid: d97438ea-bf9a-4d7d-bb5c-3b9abd2da90a
+    resourceVersion: "1729009"
+    uid: 0090e623-cfb3-40cd-b77e-b521443a93bb
+  spec:
+    clusterIP: 10.0.200.19
+    clusterIPs:
+    - 10.0.200.19
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: grpc
+      port: 50051
+      protocol: TCP
+      targetPort: 50051
+    selector:
+      olm.catalogSource: pixie-operator-index
+      olm.managed: "true"
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:11Z"
+    labels:
+      app: pl-monitoring
+      name: pl-nats
+      vizier-name: pixie
+    name: pl-nats
+    namespace: px-operator
+    resourceVersion: "1989896"
+    uid: 89ee19a7-32cf-4c7a-b581-170eb2693431
+  spec:
+    clusterIP: 10.0.25.106
+    clusterIPs:
+    - 10.0.25.106
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: client
+      port: 4222
+      protocol: TCP
+      targetPort: 4222
+    selector:
+      app: pl-monitoring
+      name: pl-nats
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:11Z"
+    labels:
+      app: pl-monitoring
+      name: pl-nats
+      vizier-name: pixie
+    name: pl-nats-mgmt
+    namespace: px-operator
+    resourceVersion: "1989897"
+    uid: 08d06e60-0c31-47c5-bcdc-8312a3956633
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: cluster
+      port: 6222
+      protocol: TCP
+      targetPort: 6222
+    - name: monitor
+      port: 8222
+      protocol: TCP
+      targetPort: 8222
+    - name: metrics
+      port: 7777
+      protocol: TCP
+      targetPort: 7777
+    - name: leafnodes
+      port: 7422
+      protocol: TCP
+      targetPort: 7422
+    - name: gateways
+      port: 7522
+      protocol: TCP
+      targetPort: 7522
+    selector:
+      app: pl-monitoring
+      name: pl-nats
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-bootstrap: "true"
+      vizier-name: pixie
+    name: vizier-cloud-connector-svc
+    namespace: px-operator
+    resourceVersion: "1989941"
+    uid: 32787d6c-9363-468b-9dfd-ea9c3ba2d0ea
+  spec:
+    clusterIP: 10.0.190.31
+    clusterIPs:
+    - 10.0.190.31
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 50800
+      protocol: TCP
+      targetPort: 50800
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-cloud-connector
+      vizier-bootstrap: "true"
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-metadata-svc
+    namespace: px-operator
+    resourceVersion: "1989946"
+    uid: 80491c60-29da-4940-b4a6-831a6ae98b36
+  spec:
+    clusterIP: 10.0.67.195
+    clusterIPs:
+    - 10.0.67.195
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 50400
+      protocol: TCP
+      targetPort: 50400
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-metadata
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-query-broker-svc
+    namespace: px-operator
+    resourceVersion: "1989951"
+    uid: d50bb433-6d6c-4304-8733-d65b9b7854b3
+  spec:
+    clusterIP: 10.0.81.227
+    clusterIPs:
+    - 10.0.81.227
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-http2
+      port: 50300
+      protocol: TCP
+      targetPort: 50300
+    - name: tcp-grpc-web
+      port: 50305
+      protocol: TCP
+      targetPort: 50305
+    selector:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: DaemonSet
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: "4"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 4
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-pem
+    namespace: px-operator
+    resourceVersion: "2121980"
+    uid: b73ce7a3-468d-4a5e-bed4-6eb0a2e54874
+  spec:
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-pem
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T00:24:01Z"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-pem
+          plane: data
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_PEM_ENV_VAR_PLACEHOLDER
+            value: "true"
+          - name: PL_TABLE_STORE_DATA_LIMIT_MB
+            value: "1228"
+          - name: TCMALLOC_SAMPLE_PARAMETER
+            value: "1048576"
+          - name: PL_CLIENT_TLS_CERT
+            value: /certs/client.crt
+          - name: PL_CLIENT_TLS_KEY
+            value: /certs/client.key
+          - name: PL_TLS_CA_CERT
+            value: /certs/ca.crt
+          - name: PL_DISABLE_SSL
+            value: "false"
+          - name: PL_HOST_PATH
+            value: /host
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_VIZIER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_CLOCK_CONVERTER
+            value: default
+          image: gcr.io/pixie-oss/pixie-prod/vizier-pem_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          name: pem
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+          securityContext:
+            capabilities:
+              add:
+              - SYS_PTRACE
+              - SYS_ADMIN
+            privileged: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /host
+            name: host-root
+            readOnly: true
+          - mountPath: /sys
+            name: sys
+            readOnly: true
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true
+        hostPID: true
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-query-broker-svc
+          - name: SERVICE_PORT
+            value: "50300"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: qb-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 10
+        volumes:
+        - hostPath:
+            path: /
+            type: Directory
+          name: host-root
+        - hostPath:
+            path: /sys
+            type: Directory
+          name: sys
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+    updateStrategy:
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 20
+      type: RollingUpdate
+  status:
+    currentNumberScheduled: 2
+    desiredNumberScheduled: 2
+    numberAvailable: 1
+    numberMisscheduled: 0
+    numberReady: 1
+    numberUnavailable: 1
+    observedGeneration: 4
+    updatedNumberScheduled: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: kelvin
+    namespace: px-operator
+    resourceVersion: "1994886"
+    uid: a2c8c635-cce7-4d11-974d-664b3c975b5a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: kelvin
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: kelvin
+          plane: data
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_HOST_PATH
+            value: /host
+          - name: PL_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_VIZIER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: TCMALLOC_SAMPLE_PARAMETER
+            value: "1048576"
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          name: app
+          ports:
+          - containerPort: 59300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+          - mountPath: /sys
+            name: sys
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-query-broker-svc
+          - name: SERVICE_PORT
+            value: "50300"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: qb-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - hostPath:
+            path: /sys
+            type: Directory
+          name: sys
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-29T20:15:12Z"
+      lastUpdateTime: "2025-12-29T20:15:12Z"
+      message: Deployment does not have minimum availability.
+      reason: MinimumReplicasUnavailable
+      status: "False"
+      type: Available
+    - lastTransitionTime: "2025-12-29T20:25:13Z"
+      lastUpdateTime: "2025-12-29T20:25:13Z"
+      message: ReplicaSet "kelvin-7b6fdbfb9f" has timed out progressing.
+      reason: ProgressDeadlineExceeded
+      status: "False"
+      type: Progressing
+    observedGeneration: 1
+    replicas: 1
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "20"
+    creationTimestamp: "2025-12-29T09:55:38Z"
+    generation: 22
+    labels:
+      olm.deployment-spec-hash: ZE2dclKFUUx13cxSRzww2iDwsYJiwPF0FaUa9
+      olm.managed: "true"
+      olm.owner: pixie-operator.v0.1.7
+      olm.owner.kind: ClusterServiceVersion
+      olm.owner.namespace: px-operator
+      operators.coreos.com/pixie-operator.px-operator: ""
+    name: vizier-operator
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: operators.coreos.com/v1alpha1
+      blockOwnerDeletion: false
+      controller: false
+      kind: ClusterServiceVersion
+      name: pixie-operator.v0.1.7
+      uid: 1229df46-65c5-4552-8df0-7476f042c940
+    resourceVersion: "2049495"
+    uid: 3971c689-dbae-487e-b64c-c982f18039a1
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 1
+    selector:
+      matchLabels:
+        app: pixie-operator
+        component: pixie-operator
+        name: vizier-operator
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          olm.operatorGroup: global-operators
+          olm.operatorNamespace: px-operator
+          olm.targetNamespaces: ""
+          operatorframework.io/properties: '{"properties":[{"type":"olm.package","value":{"packageName":"pixie-operator","version":"0.1.7"}},{"type":"olm.gvk","value":{"group":"px.dev","kind":"Vizier","version":"v1alpha1"}}]}'
+        creationTimestamp: null
+        labels:
+          app: pixie-operator
+          component: pixie-operator
+          name: vizier-operator
+          plane: control
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: OPERATOR_CONDITION_NAME
+            value: pixie-operator.v0.1.7
+          image: gcr.io/pixie-oss/pixie-prod/operator-operator_image:0.1.7
+          imagePullPolicy: IfNotPresent
+          name: app
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: pixie-operator-service-account
+        serviceAccountName: pixie-operator-service-account
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - effect: NoExecute
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+        - effect: NoExecute
+          key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-29T22:27:31Z"
+      lastUpdateTime: "2025-12-29T22:27:31Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-29T09:55:38Z"
+      lastUpdateTime: "2025-12-29T22:31:46Z"
+      message: ReplicaSet "vizier-operator-7648ff4c7b" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 22
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "9"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 9
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-query-broker
+    namespace: px-operator
+    resourceVersion: "2122136"
+    uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T01:10:06Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc.pl.svc.cluster.local
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-30T01:09:53Z"
+      lastUpdateTime: "2025-12-30T01:09:53Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-30T00:59:25Z"
+      lastUpdateTime: "2025-12-30T01:10:13Z"
+      message: ReplicaSet "vizier-query-broker-5dc57d6ff" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 9
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: kelvin
+      plane: data
+      pod-template-hash: 7b6fdbfb9f
+      vizier-name: pixie
+    name: kelvin-7b6fdbfb9f
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kelvin
+      uid: a2c8c635-cce7-4d11-974d-664b3c975b5a
+    resourceVersion: "1989998"
+    uid: 6090b8b3-285c-4752-b9b5-e6ccb46f9ddd
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: kelvin
+        pod-template-hash: 7b6fdbfb9f
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: kelvin
+          plane: data
+          pod-template-hash: 7b6fdbfb9f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_HOST_PATH
+            value: /host
+          - name: PL_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_VIZIER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_VIZIER_NAME
+            valueFrom:
+              secretKeyRef:
+                key: cluster-name
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: TCMALLOC_SAMPLE_PARAMETER
+            value: "1048576"
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-kelvin_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          name: app
+          ports:
+          - containerPort: 59300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+          - mountPath: /sys
+            name: sys
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-query-broker-svc
+          - name: SERVICE_PORT
+            value: "50300"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: qb-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - hostPath:
+            path: /sys
+            type: Directory
+          name: sys
+  status:
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "20"
+      deployment.kubernetes.io/revision-history: 1,3,5,8,10,12,14,16,18
+    creationTimestamp: "2025-12-29T09:55:38Z"
+    generation: 1
+    labels:
+      app: pixie-operator
+      component: pixie-operator
+      name: vizier-operator
+      plane: control
+      pod-template-hash: 7648ff4c7b
+    name: vizier-operator-7648ff4c7b
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-operator
+      uid: 3971c689-dbae-487e-b64c-c982f18039a1
+    resourceVersion: "2049478"
+    uid: ed9df914-414f-409f-9179-b3deda0e9665
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: pixie-operator
+        component: pixie-operator
+        name: vizier-operator
+        pod-template-hash: 7648ff4c7b
+    template:
+      metadata:
+        annotations:
+          olm.operatorGroup: global-operators
+          olm.operatorNamespace: px-operator
+          olm.targetNamespaces: ""
+          operatorframework.io/properties: '{"properties":[{"type":"olm.package","value":{"packageName":"pixie-operator","version":"0.1.7"}},{"type":"olm.gvk","value":{"group":"px.dev","kind":"Vizier","version":"v1alpha1"}}]}'
+        creationTimestamp: null
+        labels:
+          app: pixie-operator
+          component: pixie-operator
+          name: vizier-operator
+          plane: control
+          pod-template-hash: 7648ff4c7b
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: OPERATOR_CONDITION_NAME
+            value: pixie-operator.v0.1.7
+          image: gcr.io/pixie-oss/pixie-prod/operator-operator_image:0.1.7
+          imagePullPolicy: IfNotPresent
+          name: app
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: pixie-operator-service-account
+        serviceAccountName: pixie-operator-service-account
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - effect: NoExecute
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+        - effect: NoExecute
+          key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "19"
+    creationTimestamp: "2025-12-29T22:31:45Z"
+    generation: 2
+    labels:
+      app: pixie-operator
+      component: pixie-operator
+      name: vizier-operator
+      plane: control
+      pod-template-hash: d9b577cf8
+    name: vizier-operator-d9b577cf8
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-operator
+      uid: 3971c689-dbae-487e-b64c-c982f18039a1
+    resourceVersion: "2049492"
+    uid: f9a69900-50de-4b91-9732-2a9beeb89c24
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pixie-operator
+        component: pixie-operator
+        name: vizier-operator
+        pod-template-hash: d9b577cf8
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-29T22:31:45Z"
+          olm.operatorGroup: global-operators
+          olm.operatorNamespace: px-operator
+          olm.targetNamespaces: ""
+          operatorframework.io/properties: '{"properties":[{"type":"olm.package","value":{"packageName":"pixie-operator","version":"0.1.7"}},{"type":"olm.gvk","value":{"group":"px.dev","kind":"Vizier","version":"v1alpha1"}}]}'
+        creationTimestamp: null
+        labels:
+          app: pixie-operator
+          component: pixie-operator
+          name: vizier-operator
+          plane: control
+          pod-template-hash: d9b577cf8
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: OPERATOR_CONDITION_NAME
+            value: pixie-operator.v0.1.7
+          image: gcr.io/pixie-oss/pixie-prod/operator-operator_image:0.1.7
+          imagePullPolicy: IfNotPresent
+          name: app
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: pixie-operator-service-account
+        serviceAccountName: pixie-operator-service-account
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - effect: NoExecute
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+        - effect: NoExecute
+          key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:59:25Z"
+    generation: 3
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 56b67d7d9f
+      vizier-name: pixie
+    name: vizier-query-broker-56b67d7d9f
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2118347"
+    uid: 381f2991-6bc3-4040-a06b-136d3684c061
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 56b67d7d9f
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T00:43:25Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 56b67d7d9f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc.pl.svc.cluster.local
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "9"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T01:10:06Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 5dc57d6ff
+      vizier-name: pixie
+    name: vizier-query-broker-5dc57d6ff
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2122125"
+    uid: 25ebad89-5bab-45c3-a758-11f4aebe5fd7
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 5dc57d6ff
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T01:10:06Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 5dc57d6ff
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc.pl.svc.cluster.local
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "7"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:59:39Z"
+    generation: 3
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 67d4599f5f
+      vizier-name: pixie
+    name: vizier-query-broker-67d4599f5f
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2121948"
+    uid: 0fc13084-2f78-4e3c-8f49-498dd3306981
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 67d4599f5f
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T00:59:39Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 67d4599f5f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc.pl.svc.cluster.local
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "8"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T01:02:10Z"
+    generation: 3
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 687977564f
+      vizier-name: pixie
+    name: vizier-query-broker-687977564f
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2122135"
+    uid: d8047181-8885-472c-97f1-f8a0416452ba
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 687977564f
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T01:02:10Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 687977564f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc.pl.svc.cluster.local
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:33:53Z"
+    generation: 2
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 68b5fbdcdf
+      vizier-name: pixie
+    name: vizier-query-broker-68b5fbdcdf
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2106865"
+    uid: aafc0804-7c05-4ea0-823a-55e99f5f94ad
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 68b5fbdcdf
+    template:
+      metadata:
+        annotations:
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 68b5fbdcdf
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:37:13Z"
+    generation: 3
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 699bdc76f4
+      vizier-name: pixie
+    name: vizier-query-broker-699bdc76f4
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2116985"
+    uid: d880fd74-9b12-4d99-b7d2-cad4f26c9490
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 699bdc76f4
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T00:37:13Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 699bdc76f4
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 2
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 765664495f
+      vizier-name: pixie
+    name: vizier-query-broker-765664495f
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2105426"
+    uid: 719242df-3a29-4f76-9c95-ce702cebd432
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 765664495f
+    template:
+      metadata:
+        annotations:
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 765664495f
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:34:05Z"
+    generation: 3
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 79565fcf94
+      vizier-name: pixie
+    name: vizier-query-broker-79565fcf94
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2109732"
+    uid: 09a95084-ac2d-4d38-bab6-09b6b5057f1b
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 79565fcf94
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T00:34:05Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 79565fcf94
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "5"
+      vizier-name: pixie
+    creationTimestamp: "2025-12-30T00:43:25Z"
+    generation: 3
+    labels:
+      app: pl-monitoring
+      component: vizier
+      name: vizier-query-broker
+      plane: control
+      pod-template-hash: 7bd4f45f9d
+      vizier-name: pixie
+    name: vizier-query-broker-7bd4f45f9d
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vizier-query-broker
+      uid: 3f2201bd-4f79-43f6-a533-cf413bf7d034
+    resourceVersion: "2117121"
+    uid: c31271a9-5ea6-420c-82ad-772e51f3ffc4
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-query-broker
+        pod-template-hash: 7bd4f45f9d
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-30T00:43:25Z"
+          px.dev/metrics_port: "50300"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-query-broker
+          plane: control
+          pod-template-hash: 7bd4f45f9d
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PL_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                key: cluster-id
+                name: pl-cluster-secrets
+          - name: PL_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                key: sentry-dsn
+                name: pl-cluster-secrets
+                optional: true
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_CLOUD_ADDR
+            valueFrom:
+              configMapKeyRef:
+                key: PL_CLOUD_ADDR
+                name: pl-cloud-config
+          - name: PL_DATA_ACCESS
+            value: Full
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-query_broker_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50300
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          ports:
+          - containerPort: 50300
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/readyz"; until [
+            $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-cloud-connector-svc
+          - name: SERVICE_PORT
+            value: "50800"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: cc-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - command:
+          - sh
+          - -c
+          - 'set -x; URL="https://${SERVICE_NAME}:${SERVICE_PORT}/healthz"; until
+            [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq 200 ];
+            do echo "waiting for ${URL}"; sleep 2; done; '
+          env:
+          - name: SERVICE_NAME
+            value: vizier-metadata-svc
+          - name: SERVICE_PORT
+            value: "50400"
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: mds-wait
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: query-broker-service-account
+        serviceAccountName: query-broker-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: proxy-envoy-config
+          name: envoy-yaml
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      name: pl-nats
+      vizier-name: pixie
+    name: pl-nats
+    namespace: px-operator
+    resourceVersion: "1990160"
+    uid: 2dc47b2a-a4d7-408a-955c-20cf67ca6331
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        name: pl-nats
+    serviceName: pl-nats
+    template:
+      metadata:
+        annotations:
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          name: pl-nats
+          plane: control
+          vizier-name: pixie
+      spec:
+        containers:
+        - command:
+          - nats-server
+          - --config
+          - /etc/nats-config/nats.conf
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: CLUSTER_ADVERTISE
+            value: $(POD_NAME).pl-nats.$(POD_NAMESPACE).svc
+          image: gcr.io/pixie-oss/pixie-prod/vizier-deps/nats:2.9.19-scratch@sha256:5de59286eb54ead4d4a9279846098d4097b9c17a3c0588182398a7250cde1af9
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - /nats-server -sl=ldm=/var/run/nats/nats.pid && /bin/sleep 60
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8222
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: pl-nats
+          ports:
+          - containerPort: 4222
+            name: client
+            protocol: TCP
+          - containerPort: 7422
+            name: leafnodes
+            protocol: TCP
+          - containerPort: 6222
+            name: cluster
+            protocol: TCP
+          - containerPort: 8222
+            name: monitor
+            protocol: TCP
+          - containerPort: 7777
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8222
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/nats-config
+            name: config-volume
+          - mountPath: /etc/nats-server-tls-certs
+            name: nats-server-tls-volume
+          - mountPath: /var/run/nats
+            name: pid
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        shareProcessNamespace: true
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: nats-server-tls-volume
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - configMap:
+            defaultMode: 420
+            name: nats-config
+          name: config-volume
+        - emptyDir: {}
+          name: pid
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: pl-nats-5d6d6dff7c
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: pl-nats-5d6d6dff7c
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      vizier-name: pixie
+    creationTimestamp: "2025-12-29T20:15:12Z"
+    generation: 1
+    labels:
+      app: pl-monitoring
+      component: vizier
+      vizier-name: pixie
+    name: vizier-metadata
+    namespace: px-operator
+    resourceVersion: "1990639"
+    uid: 6caa7a4a-5799-4f3a-bd6b-fcb049a7c13f
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pl-monitoring
+        component: vizier
+        name: vizier-metadata
+    serviceName: vizier-metadata
+    template:
+      metadata:
+        annotations:
+          px.dev/metrics_port: "50400"
+          px.dev/metrics_scrape: "true"
+          vizier-name: pixie
+        creationTimestamp: null
+        labels:
+          app: pl-monitoring
+          component: vizier
+          name: vizier-metadata
+          plane: control
+          vizier-name: pixie
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: Exists
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+              - matchExpressions:
+                - key: beta.kubernetes.io/os
+                  operator: Exists
+                - key: beta.kubernetes.io/os
+                  operator: In
+                  values:
+                  - linux
+        containers:
+        - env:
+          - name: PL_JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                key: jwt-signing-key
+                name: pl-cluster-secrets
+          - name: PL_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PL_MAX_EXPECTED_CLOCK_SKEW
+            value: "2000"
+          - name: PL_RENEW_PERIOD
+            value: "7500"
+          - name: PL_ETCD_OPERATOR_ENABLED
+            value: "false"
+          envFrom:
+          - configMapRef:
+              name: pl-tls-config
+          image: gcr.io/pixie-oss/pixie-prod/vizier-metadata_server_image:0.14.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 50400
+              scheme: HTTPS
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: app
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 50400
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /certs
+            name: certs
+          - mountPath: /metadata
+            name: metadata-volume
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - set -xe; URL="${PROTOCOL}://${SERVICE_NAME}:${SERVICE_PORT}${HEALTH_PATH}";
+            until [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k ${URL}) -eq
+            200 ]; do echo "waiting for ${URL}"; sleep 2; done;
+          env:
+          - name: SERVICE_NAME
+            value: pl-nats-mgmt
+          - name: SERVICE_PORT
+            value: "8222"
+          - name: HEALTH_PATH
+          - name: PROTOCOL
+            value: http
+          image: ghcr.io/pixie-io/pixie-oss-pixie-dev-public-curl:multiarch-7.87.0@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd
+          imagePullPolicy: IfNotPresent
+          name: nats-wait
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 10100
+          runAsGroup: 10100
+          runAsNonRoot: true
+          runAsUser: 10100
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: metadata-service-account
+        serviceAccountName: metadata-service-account
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: service-tls-certs
+        - name: metadata-volume
+          persistentVolumeClaim:
+            claimName: metadata-pv-claim
+    updateStrategy:
+      type: RollingUpdate
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: vizier-metadata-54694b9648
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: vizier-metadata-54694b9648
+    updatedReplicas: 1
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    creationTimestamp: "2025-12-29T09:55:25Z"
+    generation: 1
+    labels:
+      olm.managed: "true"
+      operatorframework.io/bundle-unpack-ref: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+    name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+    namespace: px-operator
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: false
+      controller: false
+      kind: ConfigMap
+      name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+      uid: 7bdc84ac-deab-4d04-9573-9de91b8a2aea
+    resourceVersion: "1729199"
+    uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+  spec:
+    activeDeadlineSeconds: 600
+    backoffLimit: 3
+    completionMode: NonIndexed
+    completions: 1
+    manualSelector: false
+    parallelism: 1
+    podReplacementPolicy: TerminatingOrFailed
+    selector:
+      matchLabels:
+        batch.kubernetes.io/controller-uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+    suspend: false
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          batch.kubernetes.io/controller-uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+          batch.kubernetes.io/job-name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+          controller-uid: ba76ddf5-b330-4eec-9a81-fe3202b3ae6e
+          job-name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+          olm.managed: "true"
+        name: 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+      spec:
+        containers:
+        - command:
+          - opm
+          - alpha
+          - bundle
+          - extract
+          - -m
+          - /bundle/
+          - -n
+          - px-operator
+          - -c
+          - 23864b92b5c58447045dc434f6e35f4f5a3751099701da69e43081a6b7b7a0b
+          - -z
+          env:
+          - name: CONTAINER_IMAGE
+            value: gcr.io/pixie-oss/pixie-prod/operator/bundle:0.1.7
+          image: quay.io/operator-framework/opm@sha256:d999588bd4e9509ec9e75e49adfb6582d256e9421e454c7fb5e9fe57e7b1aada
+          imagePullPolicy: IfNotPresent
+          name: extract
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bundle
+            name: bundle
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - /bin/cp
+          - -Rv
+          - /bin/cpb
+          - /util/cpb
+          image: quay.io/operator-framework/olm@sha256:1b6002156f568d722c29138575733591037c24b4bfabc67946f268ce4752c3e6
+          imagePullPolicy: IfNotPresent
+          name: util
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /util
+            name: util
+        - command:
+          - /util/cpb
+          - /bundle
+          image: gcr.io/pixie-oss/pixie-prod/operator/bundle:0.1.7
+          imagePullPolicy: Always
+          name: pull
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bundle
+            name: bundle
+          - mountPath: /util
+            name: util
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Never
+        schedulerName: default-scheduler
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+        - key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
+        - key: kubernetes.io/arch
+          operator: Equal
+          value: ppc64le
+        - key: kubernetes.io/arch
+          operator: Equal
+          value: s390x
+        volumes:
+        - emptyDir: {}
+          name: bundle
+        - emptyDir: {}
+          name: util
+  status:
+    completionTime: "2025-12-29T09:55:35Z"
+    conditions:
+    - lastProbeTime: "2025-12-29T09:55:35Z"
+      lastTransitionTime: "2025-12-29T09:55:35Z"
+      message: Reached expected number of succeeded pods
+      reason: CompletionsReached
+      status: "True"
+      type: SuccessCriteriaMet
+    - lastProbeTime: "2025-12-29T09:55:35Z"
+      lastTransitionTime: "2025-12-29T09:55:35Z"
+      message: Reached expected number of succeeded pods
+      reason: CompletionsReached
+      status: "True"
+      type: Complete
+    ready: 0
+    startTime: "2025-12-29T09:55:25Z"
+    succeeded: 1
+    terminating: 0
+    uncountedTerminatedPods: {}
+kind: List
+metadata:
+  resourceVersion: ""
