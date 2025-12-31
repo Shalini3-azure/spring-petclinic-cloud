@@ -16,3 +16,12 @@ eureka:
   client:
     service-url:
       defaultZone: http://discovery-server:8761/eureka
+tempo:
+  base-url: http://tempo.monitoring:3100
+  service-name: customers-service
+
+genai:
+  nexus:
+    uri: https://genai-nexus.api.corpinter.net/apikey//openai/deployments/gpt-4o/chat/completions?api-version=2023-12-01-preview
+    api-key: ${GENAI_NEXUS_API_KEY}
+    model: gpt-4o

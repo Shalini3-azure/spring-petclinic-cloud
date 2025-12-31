@@ -27,3 +27,9 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+        env:
+          - name: GENAI_NEXUS_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: genai-nexus-secret
+                key: GENAI_NEXUS_API_KEY
