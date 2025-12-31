@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: "2025-12-29T09:55:04Z"
+  labels:
+    kubernetes.io/metadata.name: px-operator
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+  name: px-operator
+  resourceVersion: "2088690"
+  uid: bd7eec1f-f131-4605-8f01-4353946fcbeb
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: "2025-12-29T09:55:07Z"
+  labels:
+    kubernetes.io/metadata.name: pl
+  name: pl
+  resourceVersion: "1728910"
+  uid: e415e435-6dde-4571-82b5-db739ea88897
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active

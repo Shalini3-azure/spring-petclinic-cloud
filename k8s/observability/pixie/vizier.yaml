@@ -1,0 +1,37 @@
+apiVersion: v1
+items:
+- apiVersion: px.dev/v1alpha1
+  kind: Vizier
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"px.dev/v1alpha1","kind":"Vizier","metadata":{"annotations":{},"name":"pixie","namespace":"px-operator"},"spec":{"cloudAddr":"withpixie.ai"}}
+    creationTimestamp: "2025-12-29T20:10:08Z"
+    generation: 4
+    name: pixie
+    namespace: px-operator
+    resourceVersion: "2573683"
+    uid: 3ba5ce83-ed77-4194-89ae-5d8ed285f95a
+  spec:
+    cloudAddr: withpixie.ai:443
+    pod:
+      annotations:
+        vizier-name: pixie
+      labels:
+        vizier-name: pixie
+      resources: {}
+    version: 0.14.15
+  status:
+    checksum: dRwGnavErVU8q5g3cXtgiKq64WSxOdsS7itIUsqCHWc=
+    lastReconciliationPhaseTime: "2025-12-29T20:25:12Z"
+    message: Cloud connector pod not found. Something is preventing the vizier-operator
+      from deploying Pixie. If this status persists, clobber and re-deploy your Pixie
+      instance.
+    operatorVersion: 0.1.7+Distribution.ae80b43.20241219181616.1.jenkins
+    reconciliationPhase: Ready
+    version: 0.14.15
+    vizierPhase: Disconnected
+    vizierReason: CloudConnectorMissing
+kind: List
+metadata:
+  resourceVersion: ""

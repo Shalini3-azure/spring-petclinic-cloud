@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    instrumentation.opentelemetry.io/inject-java: "true"
+  creationTimestamp: "2025-12-27T09:19:40Z"
+  labels:
+    instrumentation.opentelemetry.io/inject-java: "true"
+    kubernetes.io/metadata.name: spring-petclinic
+  name: spring-petclinic
+  resourceVersion: "798094"
+  uid: 1c4358a7-1095-44d9-859a-5ec30dfa4c77
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active

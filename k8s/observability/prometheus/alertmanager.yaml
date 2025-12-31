@@ -1,0 +1,81 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  annotations:
+    meta.helm.sh/release-name: obs
+    meta.helm.sh/release-namespace: monitoring
+  creationTimestamp: "2025-12-27T11:11:50Z"
+  generation: 1
+  labels:
+    app: kube-prometheus-stack-alertmanager
+    app.kubernetes.io/instance: obs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 80.7.0
+    chart: kube-prometheus-stack-80.7.0
+    heritage: Helm
+    release: obs
+  name: obs-kube-prometheus-stack-alertmanager
+  namespace: monitoring
+  resourceVersion: "741554"
+  uid: 0e1260a3-3273-443d-a3e8-77cae10d14c9
+spec:
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+              - alertmanager
+            - key: alertmanager
+              operator: In
+              values:
+              - obs-kube-prometheus-stack-alertmanager
+          topologyKey: kubernetes.io/hostname
+        weight: 100
+  alertmanagerConfigNamespaceSelector: {}
+  alertmanagerConfigSelector: {}
+  automountServiceAccountToken: true
+  externalUrl: http://obs-kube-prometheus-stack-alertmanager.monitoring:9093
+  image: quay.io/prometheus/alertmanager:v0.30.0
+  imagePullPolicy: IfNotPresent
+  listenLocal: false
+  logFormat: logfmt
+  logLevel: info
+  paused: false
+  portName: http-web
+  replicas: 1
+  retention: 120h
+  routePrefix: /
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  serviceAccountName: obs-kube-prometheus-stack-alertmanager
+  version: v0.30.0
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-12-27T11:12:04Z"
+    message: ""
+    observedGeneration: 1
+    reason: ""
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-12-27T11:11:55Z"
+    message: ""
+    observedGeneration: 1
+    reason: ""
+    status: "True"
+    type: Reconciled
+  paused: false
+  replicas: 1
+  selector: alertmanager=obs-kube-prometheus-stack-alertmanager,app.kubernetes.io/instance=obs-kube-prometheus-stack-alertmanager,app.kubernetes.io/managed-by=prometheus-operator,app.kubernetes.io/name=alertmanager
+  unavailableReplicas: 0
+  updatedReplicas: 1

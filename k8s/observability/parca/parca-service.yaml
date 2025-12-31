@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"observability","app.kubernetes.io/instance":"parca","app.kubernetes.io/name":"parca","app.kubernetes.io/version":"v0.24.2"},"name":"parca","namespace":"parca"},"spec":{"ports":[{"name":"http","port":7070,"targetPort":7070}],"selector":{"app.kubernetes.io/component":"observability","app.kubernetes.io/instance":"parca","app.kubernetes.io/name":"parca"}}}
+  creationTimestamp: "2025-12-29T13:47:35Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app.kubernetes.io/component: observability
+    app.kubernetes.io/instance: parca
+    app.kubernetes.io/name: parca
+    app.kubernetes.io/version: v0.24.2
+  name: parca
+  namespace: parca
+  resourceVersion: "1897024"
+  uid: 2f568169-857c-4f98-a92a-7a44d5d69506
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.0.78.82
+  clusterIPs:
+  - 10.0.78.82
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    nodePort: 30943
+    port: 7070
+    protocol: TCP
+    targetPort: 7070
+  selector:
+    app.kubernetes.io/component: observability
+    app.kubernetes.io/instance: parca
+    app.kubernetes.io/name: parca
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 128.203.114.93
+      ipMode: VIP

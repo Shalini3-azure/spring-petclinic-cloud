@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: tempo
+    meta.helm.sh/release-namespace: monitoring
+  creationTimestamp: "2025-12-27T11:59:46Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app.kubernetes.io/instance: tempo
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/version: 2.9.0
+    helm.sh/chart: tempo-1.24.1
+  name: tempo
+  namespace: monitoring
+  resourceVersion: "1937473"
+  uid: b6b2926d-6d27-4706-a665-4a979f7fc807
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.0.186.169
+  clusterIPs:
+  - 10.0.186.169
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: tempo-jaeger-thrift-compact
+    nodePort: 32531
+    port: 6831
+    protocol: UDP
+    targetPort: 6831
+  - name: tempo-jaeger-thrift-binary
+    nodePort: 31382
+    port: 6832
+    protocol: UDP
+    targetPort: 6832
+  - name: tempo-prom-metrics
+    nodePort: 32590
+    port: 3200
+    protocol: TCP
+    targetPort: 3200
+  - name: tempo-jaeger-thrift-http
+    nodePort: 31597
+    port: 14268
+    protocol: TCP
+    targetPort: 14268
+  - name: grpc-tempo-jaeger
+    nodePort: 31560
+    port: 14250
+    protocol: TCP
+    targetPort: 14250
+  - name: tempo-zipkin
+    nodePort: 32465
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  - name: tempo-otlp-legacy
+    nodePort: 30513
+    port: 55680
+    protocol: TCP
+    targetPort: 55680
+  - name: tempo-otlp-http-legacy
+    nodePort: 32744
+    port: 55681
+    protocol: TCP
+    targetPort: 55681
+  - name: grpc-tempo-otlp
+    nodePort: 31765
+    port: 4317
+    protocol: TCP
+    targetPort: 4317
+  - name: tempo-otlp-http
+    nodePort: 31244
+    port: 4318
+    protocol: TCP
+    targetPort: 4318
+  - name: tempo-opencensus
+    nodePort: 31593
+    port: 55678
+    protocol: TCP
+    targetPort: 55678
+  selector:
+    app.kubernetes.io/instance: tempo
+    app.kubernetes.io/name: tempo
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 52.147.209.130
+      ipMode: VIP

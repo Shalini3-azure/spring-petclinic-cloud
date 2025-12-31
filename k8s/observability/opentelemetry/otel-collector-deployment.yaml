@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2025-12-27T13:45:59Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/component: opentelemetry-collector
+    app.kubernetes.io/instance: monitoring.otel-collector
+    app.kubernetes.io/managed-by: opentelemetry-operator
+    app.kubernetes.io/name: otel-collector-collector
+    app.kubernetes.io/part-of: opentelemetry
+    app.kubernetes.io/version: latest
+  name: otel-collector-collector
+  namespace: monitoring
+  ownerReferences:
+  - apiVersion: opentelemetry.io/v1beta1
+    blockOwnerDeletion: true
+    controller: true
+    kind: OpenTelemetryCollector
+    name: otel-collector
+    uid: beada918-dc8d-4655-85c3-1d9fe0d77879
+  resourceVersion: "797923"
+  uid: a4c59b84-41fc-4858-9f4f-e8759befe691
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: opentelemetry-collector
+      app.kubernetes.io/instance: monitoring.otel-collector
+      app.kubernetes.io/managed-by: opentelemetry-operator
+      app.kubernetes.io/part-of: opentelemetry
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        opentelemetry-operator-config/sha256: 97b2cf8cab91ec2cd285c39894688d53c2a0b3a155d04adeed5fb55ae2c22b20
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8888"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/component: opentelemetry-collector
+        app.kubernetes.io/instance: monitoring.otel-collector
+        app.kubernetes.io/managed-by: opentelemetry-operator
+        app.kubernetes.io/name: otel-collector-collector
+        app.kubernetes.io/part-of: opentelemetry
+        app.kubernetes.io/version: latest
+    spec:
+      containers:
+      - args:
+        - --config=/conf/collector.yaml
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: otc-container
+              divisor: "0"
+              resource: limits.memory
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              containerName: otc-container
+              divisor: "0"
+              resource: limits.cpu
+        image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.141.0
+        imagePullPolicy: IfNotPresent
+        name: otc-container
+        ports:
+        - containerPort: 8888
+          name: metrics
+          protocol: TCP
+        - containerPort: 4317
+          name: otlp-grpc
+          protocol: TCP
+        - containerPort: 4318
+          name: otlp-http
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /conf
+          name: otc-internal
+      dnsConfig: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: otel-collector-collector
+      serviceAccountName: otel-collector-collector
+      shareProcessNamespace: false
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: collector.yaml
+            path: collector.yaml
+          name: otel-collector-collector-97b2cf8c
+        name: otc-internal
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-12-27T13:46:00Z"
+    lastUpdateTime: "2025-12-27T13:46:00Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-12-27T13:45:59Z"
+    lastUpdateTime: "2025-12-27T13:46:00Z"
+    message: ReplicaSet "otel-collector-collector-bb45c95f7" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
