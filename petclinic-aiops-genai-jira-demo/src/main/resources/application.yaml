@@ -1,0 +1,23 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: petclinic-aiops-genai-jira-demo
+  cloud:
+    config:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
